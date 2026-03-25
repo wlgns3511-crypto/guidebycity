@@ -73,6 +73,14 @@ export default async function CityPage({ params }: Props) {
         </section>
       )}
 
+      <section className="mb-8 p-4 bg-slate-50 rounded-lg">
+        <h2 className="text-lg font-bold mb-2">Explore More About {c.short_name}</h2>
+        <div className="flex flex-wrap gap-3 text-sm">
+          <a href={`https://salarybycity.com/locations/${slug}/`} className="text-blue-600 hover:underline" target="_blank" rel="noopener">Salaries in {c.short_name}</a>
+          <a href={`https://costbycity.com/cities/${slug}/`} className="text-emerald-600 hover:underline" target="_blank" rel="noopener">Cost of Living in {c.short_name}</a>
+        </div>
+      </section>
+
       {weather && (
         <section className="mb-8">
           <h2 className="text-xl font-bold mb-3">Monthly Weather in {c.short_name}</h2>
