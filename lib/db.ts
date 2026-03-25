@@ -49,7 +49,7 @@ export function getCheapest(limit = 15): City[] {
 export function getHighestIncome(limit = 15): City[] {
   return getDb().prepare('SELECT * FROM cities WHERE median_income IS NOT NULL ORDER BY median_income DESC LIMIT ?').all(limit) as City[];
 }
-export function getTopComparisons(limit = 1000): { slugA: string; slugB: string }[] {
+export function getTopComparisons(limit = 5000): { slugA: string; slugB: string }[] {
   return getDb().prepare(`
     SELECT a.slug as slugA, b.slug as slugB
     FROM cities a, cities b

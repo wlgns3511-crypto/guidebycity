@@ -4,7 +4,7 @@ const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://guidebycity.com";
 export default function sitemap(): MetadataRoute.Sitemap {
   const cities = getAllCities();
   const states = getAllStates();
-  const comparisons = getTopComparisons(1000);
+  const comparisons = getTopComparisons(5000);
   return [
     { url: SITE_URL, changeFrequency: "monthly", priority: 1.0 },
     { url: `${SITE_URL}/city`, changeFrequency: "monthly", priority: 0.9 },
