@@ -9,7 +9,7 @@ function fmt(v: number | null): string { return v ? '$' + v.toLocaleString('en-U
 function fmtIdx(v: number | null): string { return v ? v.toFixed(1) : '-'; }
 
 export async function generateStaticParams() {
-  return getTopComparisons(5000).map((p) => { const [a, b] = [p.slugA, p.slugB].sort(); return { slugs: `${a}-vs-${b}` }; });
+  return getTopComparisons(3000).map((p) => { const [a, b] = [p.slugA, p.slugB].sort(); return { slugs: `${a}-vs-${b}` }; });
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
