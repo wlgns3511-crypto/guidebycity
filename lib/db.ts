@@ -13,8 +13,20 @@ export interface City {
   median_home_value: number | null; median_rent: number | null;
   per_capita_income: number | null; cost_index: number | null;
   housing_index: number | null; goods_index: number | null;
-  utilities_index: number | null;
+  utilities_index: number | null; weather_json: string | null;
 }
+
+export interface MonthWeather {
+  avg_high: number; avg_low: number; precip_mm: number;
+}
+
+export function getWeather(city: City): Record<string, MonthWeather> | null {
+  if (!city.weather_json) return null;
+  try { return JSON.parse(city.weather_json); } catch { return null; }
+}
+
+const MONTH_NAMES = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+export function monthName(m: number): string { return MONTH_NAMES[m - 1] || ''; }
 
 export function getAllCities(): City[] {
   return getDb().prepare('SELECT * FROM cities ORDER BY short_name').all() as City[];

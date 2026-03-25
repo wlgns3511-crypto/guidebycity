@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { getCityBySlug, getAllCities } from "@/lib/db";
+import { getCityBySlug, getAllCities, getWeather, monthName } from "@/lib/db";
 import { breadcrumbSchema, faqSchema } from "@/lib/schema";
 
 interface Props { params: Promise<{ slug: string }> }
@@ -34,6 +34,7 @@ export default async function CityPage({ params }: Props) {
   if (!c) notFound();
 
   const allCities = getAllCities().filter(x => x.slug !== slug).slice(0, 10);
+  const weather = getWeather(c);
   const faqs = [
     ...(c.cost_index ? [{ question: `Is ${c.short_name} expensive?`, answer: `${c.short_name} has a cost of living index of ${fmtIdx(c.cost_index)}, which is ${pctDiff(c.cost_index)}.` }] : []),
     ...(c.median_income ? [{ question: `What is the average income in ${c.short_name}?`, answer: `The median household income in ${c.short_name} is ${fmt(c.median_income)} per year.` }] : []),
@@ -68,6 +69,32 @@ export default async function CityPage({ params }: Props) {
             {c.housing_index && <div className="border rounded-lg p-4 text-center"><div className="text-sm text-slate-500">Housing</div><div className={`text-xl font-bold ${c.housing_index > 100 ? 'text-red-600' : 'text-green-600'}`}>{fmtIdx(c.housing_index)}</div></div>}
             {c.goods_index && <div className="border rounded-lg p-4 text-center"><div className="text-sm text-slate-500">Goods</div><div className={`text-xl font-bold ${c.goods_index > 100 ? 'text-red-600' : 'text-green-600'}`}>{fmtIdx(c.goods_index)}</div></div>}
             {c.utilities_index && <div className="border rounded-lg p-4 text-center"><div className="text-sm text-slate-500">Utilities</div><div className={`text-xl font-bold ${c.utilities_index > 100 ? 'text-red-600' : 'text-green-600'}`}>{fmtIdx(c.utilities_index)}</div></div>}
+          </div>
+        </section>
+      )}
+
+      {weather && (
+        <section className="mb-8">
+          <h2 className="text-xl font-bold mb-3">Monthly Weather in {c.short_name}</h2>
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse text-sm">
+              <thead><tr className="bg-slate-100">
+                <th className="p-2 text-left">Month</th>
+                <th className="p-2 text-right">Avg High</th>
+                <th className="p-2 text-right">Avg Low</th>
+                <th className="p-2 text-right">Precipitation</th>
+              </tr></thead>
+              <tbody>
+                {Object.entries(weather).sort(([a],[b]) => Number(a) - Number(b)).map(([m, w]) => (
+                  <tr key={m} className="border-b border-slate-100">
+                    <td className="p-2">{monthName(Number(m))}</td>
+                    <td className="p-2 text-right text-red-500">{w.avg_high}°F</td>
+                    <td className="p-2 text-right text-blue-500">{w.avg_low}°F</td>
+                    <td className="p-2 text-right text-slate-500">{(w.precip_mm / 25.4).toFixed(1)} in</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </section>
       )}
