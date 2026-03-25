@@ -8,8 +8,10 @@ function parseSlugs(s: string): [string, string] | null { const m = s.match(/^(.
 function fmt(v: number | null): string { return v ? '$' + v.toLocaleString('en-US') : 'N/A'; }
 function fmtIdx(v: number | null): string { return v ? v.toFixed(1) : '-'; }
 
+export const dynamicParams = true;
+
 export async function generateStaticParams() {
-  return getTopComparisons(3000).map((p) => { const [a, b] = [p.slugA, p.slugB].sort(); return { slugs: `${a}-vs-${b}` }; });
+  return getTopComparisons(2000).map((p) => { const [a, b] = [p.slugA, p.slugB].sort(); return { slugs: `${a}-vs-${b}` }; });
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
