@@ -33,6 +33,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
               {" | "}
               <a href="/privacy" className="hover:text-teal-600">Privacy</a>
               {" | "}
+              <a href="/terms" className="hover:text-teal-600">Terms</a>
+              {" | "}
               <a href="/contact" className="hover:text-teal-600">Contact</a>
             </p>
             <p className="mt-1">&copy; {new Date().getFullYear()} {SITE_NAME}. All rights reserved.</p>
