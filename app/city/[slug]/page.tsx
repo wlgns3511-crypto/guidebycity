@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getCityBySlug, getAllCities, getWeather, monthName } from "@/lib/db";
 import { breadcrumbSchema, faqSchema } from "@/lib/schema";
+import { analyzeCity } from "@/lib/city-analysis";
 
 interface Props { params: Promise<{ slug: string }> }
 
@@ -35,11 +36,16 @@ export default async function CityPage({ params }: Props) {
 
   const allCities = getAllCities().filter(x => x.slug !== slug).slice(0, 10);
   const weather = getWeather(c);
+  const analysis = analyzeCity(c, weather);
   const faqs = [
     ...(c.cost_index ? [{ question: `Is ${c.short_name} expensive?`, answer: `${c.short_name} has a cost of living index of ${fmtIdx(c.cost_index)}, which is ${pctDiff(c.cost_index)}.` }] : []),
     ...(c.median_income ? [{ question: `What is the average income in ${c.short_name}?`, answer: `The median household income in ${c.short_name} is ${fmt(c.median_income)} per year.` }] : []),
     ...(c.median_rent ? [{ question: `How much is rent in ${c.short_name}?`, answer: `The median monthly rent in ${c.short_name} is ${fmt(c.median_rent)}.` }] : []),
     ...(c.median_home_value ? [{ question: `What is the average home price in ${c.short_name}?`, answer: `The median home value in ${c.short_name} is ${fmt(c.median_home_value)}.` }] : []),
+    { question: `What is it like living in ${c.short_name}?`, answer: analysis.summary },
+    ...(analysis.pros.length > 0 ? [{ question: `What are the pros of living in ${c.short_name}?`, answer: `Advantages include: ${analysis.pros.join(". ")}. ${analysis.bestTimeToVisit}` }] : []),
+    ...(analysis.cons.length > 0 ? [{ question: `What are the downsides of living in ${c.short_name}?`, answer: `Things to consider: ${analysis.cons.join(". ")}.` }] : []),
+    ...(analysis.bestTimeToVisit ? [{ question: `When is the best time to visit ${c.short_name}?`, answer: analysis.bestTimeToVisit }] : []),
   ];
 
   const breadcrumbs = [{ name: "Home", url: "/" }, { name: c.state, url: `/state/${c.state.toLowerCase()}` }, { name: c.short_name, url: `/city/${slug}` }];
@@ -61,6 +67,61 @@ export default async function CityPage({ params }: Props) {
           {c.median_home_value && <div><div className="text-sm text-slate-500">Median Home</div><div className="text-2xl font-bold">{fmt(c.median_home_value)}</div></div>}
         </div>
       </div>
+
+      {/* City Overview */}
+      <section className="mb-6">
+        <h2 className="text-xl font-bold mb-3">Living in {c.short_name}</h2>
+        <div className="bg-teal-50 border-l-4 border-teal-400 p-4 rounded-r-lg">
+          <p className="text-slate-700 text-sm">{analysis.summary}</p>
+        </div>
+      </section>
+
+      {(analysis.pros.length > 0 || analysis.cons.length > 0) && (
+        <div className="grid md:grid-cols-2 gap-4 mb-6">
+          {analysis.pros.length > 0 && (
+            <div className="bg-green-50 rounded-lg p-4">
+              <h3 className="font-semibold text-green-700 mb-2">Pros</h3>
+              <ul className="space-y-1">
+                {analysis.pros.map((p, i) => (
+                  <li key={i} className="text-sm text-slate-700 flex items-start gap-2">
+                    <span className="text-green-500 mt-0.5">✓</span> {p}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {analysis.cons.length > 0 && (
+            <div className="bg-red-50 rounded-lg p-4">
+              <h3 className="font-semibold text-red-700 mb-2">Cons</h3>
+              <ul className="space-y-1">
+                {analysis.cons.map((con, i) => (
+                  <li key={i} className="text-sm text-slate-700 flex items-start gap-2">
+                    <span className="text-red-500 mt-0.5">✗</span> {con}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+      )}
+
+      {analysis.whoShouldLive.length > 0 && (
+        <section className="mb-6">
+          <h2 className="text-xl font-bold mb-3">Best For</h2>
+          <div className="flex flex-wrap gap-2">
+            {analysis.whoShouldLive.map((w, i) => (
+              <span key={i} className="px-3 py-1.5 bg-teal-50 text-teal-700 rounded-full text-sm border border-teal-200">{w}</span>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {analysis.bestTimeToVisit && (
+        <div className="bg-amber-50 border-l-4 border-amber-300 p-3 rounded-r-lg mb-6">
+          <p className="font-medium text-amber-800 text-xs mb-1">Best Time to Visit</p>
+          <p className="text-slate-700 text-sm">{analysis.bestTimeToVisit}</p>
+        </div>
+      )}
 
       {(c.housing_index || c.goods_index || c.utilities_index) && (
         <section className="mb-8">
