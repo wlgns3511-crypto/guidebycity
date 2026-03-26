@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { getCityBySlug, getAllCities, getWeather, monthName } from "@/lib/db";
 import { breadcrumbSchema, faqSchema } from "@/lib/schema";
 import { analyzeCity } from "@/lib/city-analysis";
+import { getCrossRefInsights } from '@/lib/crossref';
 
 interface Props { params: Promise<{ slug: string }> }
 
@@ -36,6 +37,7 @@ export default async function CityPage({ params }: Props) {
 
   const allCities = getAllCities().filter(x => x.slug !== slug).slice(0, 10);
   const weather = getWeather(c);
+  const crossInsights = getCrossRefInsights(slug, 'guide');
   const analysis = analyzeCity(c, weather);
   const faqs = [
     ...(c.cost_index ? [{ question: `Is ${c.short_name} expensive?`, answer: `${c.short_name} has a cost of living index of ${fmtIdx(c.cost_index)}, which is ${pctDiff(c.cost_index)}.` }] : []),
@@ -141,6 +143,19 @@ export default async function CityPage({ params }: Props) {
           <a href={`https://costbycity.com/cities/${slug}/`} className="text-emerald-600 hover:underline" target="_blank" rel="noopener">Cost of Living in {c.short_name}</a>
         </div>
       </section>
+
+      {crossInsights.length > 0 && (
+        <section className="mt-8 mb-6">
+          <h2 className="text-xl font-bold mb-3">Related Data Insights</h2>
+          <div className="space-y-2">
+            {crossInsights.map((insight, i) => (
+              <div key={i} className="p-3 bg-slate-50 border-l-4 border-slate-300 rounded-r-lg">
+                <p className="text-sm text-slate-700" dangerouslySetInnerHTML={{ __html: insight }} />
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       {weather && (
         <section className="mb-8">
