@@ -15,7 +15,7 @@ export default async function Image({ params }: { params: Promise<{ slug: string
   if (!c) {
     return new ImageResponse(
       <div style={{ display: 'flex', width: '100%', height: '100%', backgroundColor: '#0284c7', color: 'white', alignItems: 'center', justifyContent: 'center', fontFamily: 'sans-serif' }}>
-        <div style={{ fontSize: 48 }}>GUIDEBYCITY</div>
+        <div style={{ display: 'flex', fontSize: 48 }}>GUIDEBYCITY</div>
       </div>,
       { ...size }
     );
@@ -42,19 +42,19 @@ export default async function Image({ params }: { params: Promise<{ slug: string
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 32 }}>
         <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <div style={{ fontSize: 18, color: '#0284c7', fontWeight: 700, letterSpacing: 2 }}>GUIDEBYCITY</div>
-          <div style={{ fontSize: 52, fontWeight: 800, color: '#0c1a2e', marginTop: 8, lineHeight: 1.1 }}>
+          <div style={{ display: 'flex', fontSize: 18, color: '#0284c7', fontWeight: 700, letterSpacing: 2 }}>GUIDEBYCITY</div>
+          <div style={{ display: 'flex', fontSize: 52, fontWeight: 800, color: '#0c1a2e', marginTop: 8, lineHeight: 1.1 }}>
             {c.short_name}
           </div>
-          <div style={{ fontSize: 22, color: '#64748b', marginTop: 6 }}>
+          <div style={{ display: 'flex', fontSize: 22, color: '#64748b', marginTop: 6 }}>
             {c.name}, {c.state}
           </div>
         </div>
         {(avgHigh !== null && avgLow !== null) && (
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', backgroundColor: '#e0f2fe', borderRadius: 16, padding: '16px 28px', border: '2px solid #bae6fd' }}>
-            <div style={{ fontSize: 14, color: '#0369a1', fontWeight: 600, marginBottom: 4 }}>Avg Climate</div>
-            <div style={{ fontSize: 32, fontWeight: 800, color: '#0284c7' }}>{avgHigh}°F</div>
-            <div style={{ fontSize: 16, color: '#0369a1' }}>High / {avgLow}°F Low</div>
+            <div style={{ display: 'flex', fontSize: 14, color: '#0369a1', fontWeight: 600, marginBottom: 4 }}>Avg Climate</div>
+            <div style={{ display: 'flex', fontSize: 32, fontWeight: 800, color: '#0284c7' }}>{avgHigh}°F</div>
+            <div style={{ display: 'flex', fontSize: 16, color: '#0369a1' }}>High / {avgLow}°F Low</div>
           </div>
         )}
       </div>
@@ -64,8 +64,8 @@ export default async function Image({ params }: { params: Promise<{ slug: string
         <div style={{ display: 'flex', gap: 16, marginTop: 8 }}>
           {stats.map((s) => (
             <div key={s.label} style={{ display: 'flex', flexDirection: 'column', flex: 1, backgroundColor: 'white', borderRadius: 12, padding: '20px 16px', border: '2px solid #bae6fd', alignItems: 'center' }}>
-              <div style={{ fontSize: 14, color: '#64748b', fontWeight: 600, marginBottom: 6 }}>{s.label}</div>
-              <div style={{ fontSize: 26, fontWeight: 800, color: '#0c1a2e' }}>{s.value}</div>
+              <div style={{ display: 'flex', fontSize: 14, color: '#64748b', fontWeight: 600, marginBottom: 6 }}>{s.label}</div>
+              <div style={{ display: 'flex', fontSize: 26, fontWeight: 800, color: '#0c1a2e' }}>{s.value}</div>
             </div>
           ))}
         </div>
@@ -76,7 +76,7 @@ export default async function Image({ params }: { params: Promise<{ slug: string
 
       {/* Footer */}
       <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 14, color: '#94a3b8' }}>
-        <div style={{ color: '#0284c7', fontWeight: 600 }}>guidebycity.com</div>
+        <div style={{ display: 'flex', color: '#0284c7', fontWeight: 600 }}>guidebycity.com</div>
         <div>City Guide · Cost of Living · Climate</div>
       </div>
     </div>,
