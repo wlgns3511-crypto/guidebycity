@@ -205,6 +205,14 @@ export default async function CityPage({ params }: Props) {
         </section>
       )}
 
+      <section className="mt-8 p-6 bg-sky-50 rounded-xl border border-sky-100">
+        <h3 className="text-lg font-semibold text-sky-900 mb-3">Planning to Relocate?</h3>
+        <p className="text-sky-800 text-sm leading-relaxed">
+          Compare auto insurance rates, find affordable renters insurance, and get moving quotes for your relocation.
+          Check <a href={`https://salarybycity.com`} className="underline font-medium">local salaries</a> and <a href={`https://costbycity.com`} className="underline font-medium">cost of living</a> to budget your move.
+        </p>
+      </section>
+
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema(breadcrumbs)) }} />
       {faqs.length > 0 && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema(faqs)) }} />}
     </div>
