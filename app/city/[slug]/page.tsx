@@ -7,6 +7,7 @@ import { getCrossRefInsights } from '@/lib/crossref';
 import { DataFeedback } from "@/components/DataFeedback";
 import { EmbedButton } from "@/components/EmbedButton";
 import { FreshnessTag } from "@/components/FreshnessTag";
+import { CostCompareCalculator } from "@/components/CostCompareCalculator";
 
 interface Props { params: Promise<{ slug: string }> }
 
@@ -137,6 +138,10 @@ export default async function CityPage({ params }: Props) {
             {c.utilities_index && <div className="border rounded-lg p-4 text-center"><div className="text-sm text-slate-500">Utilities</div><div className={`text-xl font-bold ${c.utilities_index > 100 ? 'text-red-600' : 'text-green-600'}`}>{fmtIdx(c.utilities_index)}</div></div>}
           </div>
         </section>
+      )}
+
+      {c.cost_index && (
+        <CostCompareCalculator cityName={c.short_name} defaultCostIndex={c.cost_index} />
       )}
 
       <section className="mb-8 p-4 bg-slate-50 rounded-lg">
