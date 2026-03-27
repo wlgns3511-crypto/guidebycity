@@ -6,6 +6,7 @@ import { analyzeCity } from "@/lib/city-analysis";
 import { getCrossRefInsights } from '@/lib/crossref';
 import { DataFeedback } from "@/components/DataFeedback";
 import { EmbedButton } from "@/components/EmbedButton";
+import { FreshnessTag } from "@/components/FreshnessTag";
 
 interface Props { params: Promise<{ slug: string }> }
 
@@ -207,7 +208,9 @@ export default async function CityPage({ params }: Props) {
         </section>
       )}
 
-      <EmbedButton url="https://guidebycity.com" title="Data from GuideByCity" site="GuideByCity" siteUrl="https://guidebycity.com" />
+      <FreshnessTag source="Census & BEA" />
+
+          <EmbedButton url="https://guidebycity.com" title="Data from GuideByCity" site="GuideByCity" siteUrl="https://guidebycity.com" />
 
           <DataFeedback />
 
