@@ -5,6 +5,7 @@ import { breadcrumbSchema, faqSchema } from "@/lib/schema";
 import { analyzeCity } from "@/lib/city-analysis";
 import { getCrossRefInsights } from '@/lib/crossref';
 import { DataFeedback } from "@/components/DataFeedback";
+import { EmbedButton } from "@/components/EmbedButton";
 
 interface Props { params: Promise<{ slug: string }> }
 
@@ -206,7 +207,9 @@ export default async function CityPage({ params }: Props) {
         </section>
       )}
 
-      <DataFeedback />
+      <EmbedButton url="https://guidebycity.com" title="Data from GuideByCity" site="GuideByCity" siteUrl="https://guidebycity.com" />
+
+          <DataFeedback />
 
           <section className="mt-8 p-6 bg-sky-50 rounded-xl border border-sky-100">
         <h3 className="text-lg font-semibold text-sky-900 mb-3">Planning to Relocate?</h3>
