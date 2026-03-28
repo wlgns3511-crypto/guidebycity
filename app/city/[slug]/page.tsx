@@ -4,6 +4,7 @@ import { getCityBySlug, getAllCities, getWeather, monthName } from "@/lib/db";
 import { breadcrumbSchema, faqSchema } from "@/lib/schema";
 import { analyzeCity } from "@/lib/city-analysis";
 import { getCrossRefInsights } from '@/lib/crossref';
+import { AdSlot } from "@/components/AdSlot";
 import { DataFeedback } from "@/components/DataFeedback";
 import { EmbedButton } from "@/components/EmbedButton";
 import { FreshnessTag } from "@/components/FreshnessTag";
@@ -74,6 +75,8 @@ export default async function CityPage({ params }: Props) {
         </div>
       </div>
 
+      <AdSlot id="city-top" />
+
       {/* City Overview */}
       <section className="mb-6">
         <h2 className="text-xl font-bold mb-3">Living in {c.short_name}</h2>
@@ -143,6 +146,8 @@ export default async function CityPage({ params }: Props) {
       {c.cost_index && (
         <CostCompareCalculator cityName={c.short_name} defaultCostIndex={c.cost_index} />
       )}
+
+      <AdSlot id="city-mid" />
 
       <section className="mb-8 p-4 bg-slate-50 rounded-lg">
         <h2 className="text-lg font-bold mb-2">Explore More About {c.short_name}</h2>

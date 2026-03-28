@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getCityBySlug, getTopComparisons } from "@/lib/db";
+import { AdSlot } from "@/components/AdSlot";
 import { faqSchema } from "@/lib/schema";
 
 interface Props { params: Promise<{ slugs: string }> }
@@ -70,6 +71,9 @@ export default async function ComparePage({ params }: Props) {
           ))}
         </tbody>
       </table>
+
+      <AdSlot id="compare-bottom" />
+
       <section className="mt-8">
         {faqs.map((f, i) => (<details key={i} className="border rounded-lg mb-2" open><summary className="p-4 font-medium">{f.question}</summary><div className="px-4 pb-4 text-slate-600">{f.answer}</div></details>))}
       </section>
