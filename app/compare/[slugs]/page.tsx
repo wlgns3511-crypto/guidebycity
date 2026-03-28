@@ -9,6 +9,7 @@ function fmt(v: number | null): string { return v ? '$' + v.toLocaleString('en-U
 function fmtIdx(v: number | null): string { return v ? v.toFixed(1) : '-'; }
 
 export const dynamicParams = true;
+export const revalidate = 86400;
 
 export async function generateStaticParams() {
   return getTopComparisons(2000).map((p) => { const [a, b] = [p.slugA, p.slugB].sort(); return { slugs: `${a}-vs-${b}` }; });
