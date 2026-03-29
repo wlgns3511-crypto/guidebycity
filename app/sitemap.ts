@@ -1,10 +1,20 @@
 import type { MetadataRoute } from "next";
 import { getAllCities, getAllStates, getTopComparisons, getAllZipGuides } from "@/lib/db";
+import { getAllPosts } from "@/lib/blog";
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://guidebycity.com";
 export default function sitemap(): MetadataRoute.Sitemap {
   const cities = getAllCities();
   const states = getAllStates();
   const comparisons = getTopComparisons(5000);
+  const posts = getAllPosts();
+  const blogPages: MetadataRoute.Sitemap = [
+    { url: `${SITE_URL}/blog/`, changeFrequency: "weekly", priority: 0.8 },
+    ...posts.map((p) => ({
+      url: `${SITE_URL}/blog/${p.slug}/`,
+      changeFrequency: "monthly" as const,
+      priority: 0.7,
+    })),
+  ];
   return [
     { url: SITE_URL, changeFrequency: "monthly", priority: 1.0 },
     { url: `${SITE_URL}/city`, changeFrequency: "monthly", priority: 0.9 },
@@ -13,5 +23,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...cities.map((c) => ({ url: `${SITE_URL}/city/${c.slug}`, changeFrequency: "monthly" as const, priority: 0.7 })),
     ...comparisons.map((p) => { const [a, b] = [p.slugA, p.slugB].sort(); return { url: `${SITE_URL}/compare/${a}-vs-${b}`, changeFrequency: "monthly" as const, priority: 0.5 }; }),
     ...getAllZipGuides().map((z) => ({ url: `${SITE_URL}/zip/${z.slug}`, changeFrequency: "monthly" as const, priority: 0.6 })),
+    ...blogPages,
   ];
 }
