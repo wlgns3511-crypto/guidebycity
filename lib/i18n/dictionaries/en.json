@@ -1,0 +1,23 @@
+{
+  "siteName": "GuideByCity",
+  "title": "City Guides, Cost of Living & Demographics",
+  "description": "Explore 380+ US cities. Cost of living, income, housing, and city-to-city comparisons.",
+  "cityGuide": "City Guide",
+  "costOfLiving": "Cost of Living",
+  "demographics": "Demographics",
+  "climate": "Climate",
+  "medianIncome": "Median Income",
+  "medianRent": "Median Rent",
+  "medianHome": "Median Home",
+  "livingIn": "Living in",
+  "pros": "Pros",
+  "cons": "Cons",
+  "bestFor": "Best For",
+  "costBreakdown": "Cost Breakdown",
+  "housing": "Housing",
+  "goods": "Goods",
+  "utilities": "Utilities",
+  "faq": "FAQ",
+  "viewInEnglish": "English version",
+  "viewInSpanish": "Espa\u00f1ol"
+}
