@@ -5,7 +5,18 @@ import { AdSlot } from "@/components/AdSlot";
 import { faqSchema } from "@/lib/schema";
 
 interface Props { params: Promise<{ slugs: string }> }
-function parseSlugs(s: string): [string, string] | null { const m = s.match(/^(.+)-vs-(.+)$/); return m ? [m[1], m[2]] : null; }
+function parseSlugs(s: string): [string, string] | null {
+  // Try all "-vs-" split points and validate against DB
+  const marker = "-vs-";
+  let idx = s.indexOf(marker);
+  while (idx !== -1) {
+    const a = s.slice(0, idx);
+    const b = s.slice(idx + marker.length);
+    if (getCityBySlug(a) && getCityBySlug(b)) return [a, b];
+    idx = s.indexOf(marker, idx + 1);
+  }
+  return null;
+}
 function fmt(v: number | null): string { return v ? '$' + v.toLocaleString('en-US') : 'N/A'; }
 function fmtIdx(v: number | null): string { return v ? v.toFixed(1) : '-'; }
 

@@ -61,3 +61,34 @@ export function getTopComparisons(limit = 5000): { slugA: string; slugB: string 
 export function countCities(): number {
   return (getDb().prepare('SELECT COUNT(*) as c FROM cities').get() as { c: number }).c;
 }
+
+// --- ZIP guide queries ---
+
+export interface ZipGuide {
+  zip_code: string;
+  city: string;
+  state: string;
+  slug: string;
+  population: number | null;
+  median_income: number | null;
+  median_home_value: number | null;
+  median_rent: number | null;
+  median_age: number | null;
+  poverty_rate: number | null;
+  bachelors_pct: number | null;
+  homeowner_rate: number | null;
+  unemployment_rate: number | null;
+  cost_index: number | null;
+}
+
+export function getAllZipGuides(): ZipGuide[] {
+  return getDb().prepare('SELECT * FROM zip_guides ORDER BY zip_code').all() as ZipGuide[];
+}
+
+export function getZipGuideBySlug(slug: string): ZipGuide | undefined {
+  return getDb().prepare('SELECT * FROM zip_guides WHERE slug = ?').get(slug) as ZipGuide | undefined;
+}
+
+export function getZipGuidesByState(state: string): ZipGuide[] {
+  return getDb().prepare('SELECT * FROM zip_guides WHERE state = ? ORDER BY population DESC').all(state) as ZipGuide[];
+}

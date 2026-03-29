@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { getCityBySlug, getAllCities, getWeather, monthName } from "@/lib/db";
+import { getCityBySlug, getAllCities, getCitiesByState, getWeather, monthName } from "@/lib/db";
 import { breadcrumbSchema, faqSchema } from "@/lib/schema";
 import { analyzeCity } from "@/lib/city-analysis";
 import { getCrossRefInsights } from '@/lib/crossref';
@@ -41,6 +41,7 @@ export default async function CityPage({ params }: Props) {
   if (!c) notFound();
 
   const allCities = getAllCities().filter(x => x.slug !== slug).slice(0, 10);
+  const stateCities = c.state ? getCitiesByState(c.state).filter(x => x.slug !== slug).slice(0, 8) : [];
   const weather = getWeather(c);
   const crossInsights = getCrossRefInsights(slug, 'guide');
   const analysis = analyzeCity(c, weather);
@@ -192,6 +193,18 @@ export default async function CityPage({ params }: Props) {
                 ))}
               </tbody>
             </table>
+          </div>
+        </section>
+      )}
+
+      {stateCities.length > 0 && (
+        <section className="mb-8">
+          <h2 className="text-xl font-bold mb-3">Compare {c.short_name} With Other {c.state} Cities</h2>
+          <div className="grid sm:grid-cols-2 gap-2 text-sm">
+            {stateCities.map((o) => {
+              const [a, b] = [slug, o.slug].sort();
+              return (<a key={o.slug} href={`/compare/${a}-vs-${b}`} className="p-3 border rounded-lg hover:bg-teal-50 text-teal-600">{c.short_name} vs {o.short_name}</a>);
+            })}
           </div>
         </section>
       )}
