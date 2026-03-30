@@ -10,6 +10,10 @@ import { EmbedButton } from "@/components/EmbedButton";
 import { FreshnessTag } from "@/components/FreshnessTag";
 import { CostCompareCalculator } from "@/components/CostCompareCalculator";
 import { AuthorBox } from "@/components/AuthorBox";
+import { EditorNote } from "@/components/EditorNote";
+import { DidYouKnow } from "@/components/DidYouKnow";
+import { DataSourceBadge } from "@/components/DataSourceBadge";
+import { CrossSiteLinks } from "@/components/CrossSiteLinks";
 
 interface Props { params: Promise<{ slug: string }> }
 
@@ -67,6 +71,8 @@ export default async function CityPage({ params }: Props) {
 
       <h1 className="text-3xl font-bold mb-2">{c.short_name} City Guide</h1>
       <p className="text-slate-500 mb-6">{c.name}</p>
+
+      <EditorNote note={`This guide covers key livability metrics for ${c.short_name}, including cost of living, income levels, housing costs, and climate data to help you evaluate whether this city is right for you.`} />
 
       <div className="bg-teal-50 rounded-lg p-6 mb-6">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
@@ -148,6 +154,8 @@ export default async function CityPage({ params }: Props) {
       {c.cost_index && (
         <CostCompareCalculator cityName={c.short_name} defaultCostIndex={c.cost_index} />
       )}
+
+      <DidYouKnow fact={`The cost of living in ${c.short_name} is ${c.cost_index ? pctDiff(c.cost_index) : 'not yet indexed'} compared to the national baseline of 100. Factors like housing, groceries, and utilities all contribute to this score.`} />
 
       <AdSlot id="city-mid" />
 
@@ -248,8 +256,15 @@ export default async function CityPage({ params }: Props) {
         </p>
       </section>
 
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema(breadcrumbs)) }} />
-      {faqs.length > 0 && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema(faqs)) }} />}
+      <DataSourceBadge sources={[
+        { name: "Census Bureau", url: "https://www.census.gov" },
+        { name: "BLS", url: "https://www.bls.gov" },
+      ]} />
+
+      <CrossSiteLinks current="CityGuide" />
+
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({ ...breadcrumbSchema(breadcrumbs), dateModified: "2026-03-31", author: { "@type": "Organization", name: "DataPeek" } }) }} />
+      {faqs.length > 0 && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({ ...faqSchema(faqs), dateModified: "2026-03-31", author: { "@type": "Organization", name: "DataPeek" } }) }} />}
     </div>
   );
 }
