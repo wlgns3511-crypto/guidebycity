@@ -16,13 +16,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
     })),
   ];
   return [
-    { url: SITE_URL, changeFrequency: "monthly", priority: 1.0 },
-    { url: `${SITE_URL}/city`, changeFrequency: "monthly", priority: 0.9 },
-    { url: `${SITE_URL}/compare`, changeFrequency: "monthly", priority: 0.9 },
-    ...states.map((s) => ({ url: `${SITE_URL}/state/${s.toLowerCase()}`, changeFrequency: "monthly" as const, priority: 0.8 })),
-    ...cities.map((c) => ({ url: `${SITE_URL}/city/${c.slug}`, changeFrequency: "monthly" as const, priority: 0.7 })),
-    ...comparisons.map((p) => { const [a, b] = [p.slugA, p.slugB].sort(); return { url: `${SITE_URL}/compare/${a}-vs-${b}`, changeFrequency: "monthly" as const, priority: 0.5 }; }),
-    ...getAllZipGuides().map((z) => ({ url: `${SITE_URL}/zip/${z.slug}`, changeFrequency: "monthly" as const, priority: 0.6 })),
+    { url: `${SITE_URL}/`, changeFrequency: "monthly", priority: 1.0 },
+    { url: `${SITE_URL}/city/`, changeFrequency: "monthly", priority: 0.9 },
+    { url: `${SITE_URL}/compare/`, changeFrequency: "monthly", priority: 0.9 },
+    ...states.map((s) => ({ url: `${SITE_URL}/state/${s.toLowerCase()}/`, changeFrequency: "monthly" as const, priority: 0.8 })),
+    ...cities.map((c) => ({ url: `${SITE_URL}/city/${c.slug}/`, changeFrequency: "monthly" as const, priority: 0.7 })),
+    ...comparisons.map((p) => { const [a, b] = [p.slugA, p.slugB].sort(); return { url: `${SITE_URL}/compare/${a}-vs-${b}/`, changeFrequency: "monthly" as const, priority: 0.5 }; }),
+    ...getAllZipGuides().map((z) => ({ url: `${SITE_URL}/zip/${z.slug}/`, changeFrequency: "monthly" as const, priority: 0.6 })),
     ...blogPages,
   ];
 }

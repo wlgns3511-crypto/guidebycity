@@ -58,6 +58,15 @@ export function getTopComparisons(limit = 5000): { slugA: string; slugB: string 
     LIMIT ?
   `).all(limit) as { slugA: string; slugB: string }[];
 }
+export function searchCities(query: string, limit = 30): City[] {
+  const q = query.trim().toLowerCase();
+  if (!q) return [];
+  return getDb().prepare(`
+    SELECT * FROM cities WHERE LOWER(short_name) LIKE ? OR LOWER(name) LIKE ? OR LOWER(slug) LIKE ?
+    ORDER BY population DESC LIMIT ?
+  `).all('%' + q + '%', '%' + q + '%', '%' + q + '%', limit) as City[];
+}
+
 export function countCities(): number {
   return (getDb().prepare('SELECT COUNT(*) as c FROM cities').get() as { c: number }).c;
 }

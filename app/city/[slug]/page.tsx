@@ -9,6 +9,7 @@ import { DataFeedback } from "@/components/DataFeedback";
 import { EmbedButton } from "@/components/EmbedButton";
 import { FreshnessTag } from "@/components/FreshnessTag";
 import { CostCompareCalculator } from "@/components/CostCompareCalculator";
+import { AuthorBox } from "@/components/AuthorBox";
 
 interface Props { params: Promise<{ slug: string }> }
 
@@ -230,6 +231,8 @@ export default async function CityPage({ params }: Props) {
           ))}
         </section>
       )}
+
+      <AuthorBox />
 
       <FreshnessTag source="Census & BEA" />
 
