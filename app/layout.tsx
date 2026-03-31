@@ -52,7 +52,6 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
               <a href="/city" className="hover:text-teal-600">Cities</a>
               <a href="/compare" className="hover:text-teal-600">Compare</a>
               <a href="/blog/" className="hover:text-teal-600">Guides</a>
-              <a href="/es/" className="hover:text-teal-600 font-semibold">ES</a>
             </nav>
           </div>
         </header>
@@ -80,7 +79,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
                 <a href="https://fairrentwize.com" className="hover:text-teal-600">Fair Rents</a>
               </div>
             </div>
-            <p className="mt-1">\&copy; {new Date().getFullYear()} {SITE_NAME}. All rights reserved.</p>
+            <p className="mt-1">&copy; {new Date().getFullYear()} {SITE_NAME}. All rights reserved.</p>
           </div>
         </footer>
       </body>

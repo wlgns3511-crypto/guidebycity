@@ -8,7 +8,7 @@ import { FreshnessTag } from "@/components/FreshnessTag";
 interface Props { params: Promise<{ slug: string }> }
 
 function fmt(v: number | null): string { return v ? '$' + v.toLocaleString('en-US') : 'N/A'; }
-function fmtPct(v: number | null): string { return v !== null && v !== undefined ? v.toFixed(1) + '%' : 'N/A'; }
+function fmtPct(v: number | null): string { return v !== null && v !== undefined ? (v * 100).toFixed(1) + '%' : 'N/A'; }
 
 export const dynamicParams = true;
 export const revalidate = false; // 24 hours
@@ -19,13 +19,18 @@ export async function generateStaticParams() {
   return zips.map((z) => ({ slug: z.slug }));
 }
 
+function zipLabel(z: { zip_code: string; city: string; state: string }): string {
+  return z.city ? `${z.zip_code} ${z.city}, ${z.state}` : `${z.zip_code}, ${z.state}`;
+}
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const z = getZipGuideBySlug(slug);
   if (!z) return {};
+  const label = zipLabel(z);
   return {
-    title: `${z.zip_code} ${z.city}, ${z.state} - Demographics, Income & Housing Guide`,
-    description: `${z.zip_code} ${z.city}, ${z.state}: median income ${fmt(z.median_income)}, median rent ${fmt(z.median_rent)}, home value ${fmt(z.median_home_value)}. Population${z.population ? ': ' + z.population.toLocaleString() : ' data'}, poverty rate ${fmtPct(z.poverty_rate)}.`,
+    title: `${label} - Demographics, Income & Housing Guide`,
+    description: `${label}: median income ${fmt(z.median_income)}, median rent ${fmt(z.median_rent)}, home value ${fmt(z.median_home_value)}. Population${z.population ? ': ' + z.population.toLocaleString() : ' data'}, poverty rate ${fmtPct(z.poverty_rate)}.`,
     alternates: { canonical: `/zip/${slug}` },
   };
 }
@@ -39,25 +44,26 @@ export default async function ZipGuidePage({ params }: Props) {
     .filter((nz) => nz.zip_code !== z.zip_code)
     .slice(0, 12);
 
+  const label = zipLabel(z);
   const crumbs = [
     { label: "Home", href: "/" },
     { label: z.state, href: `/state/${z.state.toLowerCase()}/` },
-    { label: `${z.zip_code} ${z.city}` },
+    { label: z.city ? `${z.zip_code} ${z.city}` : z.zip_code },
   ];
 
   const faqs = [
     {
-      question: `What is the median income in ${z.zip_code} ${z.city}?`,
-      answer: `The median household income in ${z.zip_code} ${z.city}, ${z.state} is ${fmt(z.median_income)} per year.`,
+      question: `What is the median income in ${label}?`,
+      answer: `The median household income in ${label} is ${fmt(z.median_income)} per year.`,
     },
     {
       question: `What is the average rent in ${z.zip_code}?`,
-      answer: `The median monthly rent in ${z.zip_code} ${z.city}, ${z.state} is ${fmt(z.median_rent)}.`,
+      answer: `The median monthly rent in ${label} is ${fmt(z.median_rent)}.`,
     },
     {
       question: `What is the population of ${z.zip_code}?`,
       answer: z.population
-        ? `The population of ${z.zip_code} ${z.city}, ${z.state} is approximately ${z.population.toLocaleString()}.`
+        ? `The population of ${label} is approximately ${z.population.toLocaleString()}.`
         : `Population data for ${z.zip_code} is not currently available.`,
     },
   ];
@@ -78,7 +84,7 @@ export default async function ZipGuidePage({ params }: Props) {
 
       <header className="mb-8">
         <h1 className="text-3xl font-bold text-teal-700 mb-3">
-          {z.zip_code} {z.city}, {z.state} — Neighborhood Guide
+          {label} — Neighborhood Guide
         </h1>
         <FreshnessTag source="U.S. Census Bureau, ACS 5-Year Estimates" />
       </header>

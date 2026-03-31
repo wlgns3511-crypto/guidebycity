@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 const KEY = "44342f28a6fd4b2dbcb1a96fd2417c42";
-const HOST = "cityguidefacts.com";
+const HOST = "guidebycity.com";
 
 async function submitToIndexNow(urls: string[]) {
   const res = await fetch("https://api.indexnow.org/indexnow", {
