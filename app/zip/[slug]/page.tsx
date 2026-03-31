@@ -11,7 +11,7 @@ function fmt(v: number | null): string { return v ? '$' + v.toLocaleString('en-U
 function fmtPct(v: number | null): string { return v !== null && v !== undefined ? v.toFixed(1) + '%' : 'N/A'; }
 
 export const dynamicParams = true;
-export const revalidate = 86400; // 24 hours
+export const revalidate = false; // 24 hours
 
 export async function generateStaticParams() {
   // Only pre-render top 500 by population; rest served via ISR

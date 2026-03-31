@@ -13,7 +13,7 @@ function fmt(v: number | null): string { return v ? '$' + v.toLocaleString('en-U
 function fmtIdx(v: number | null): string { return v ? v.toFixed(1) : 'N/A'; }
 
 export const dynamicParams = true;
-export const revalidate = 86400;
+export const revalidate = false;
 
 export async function generateStaticParams() {
   return getAllCities().slice(0, 300).map((c) => ({ slug: c.slug }));

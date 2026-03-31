@@ -1,19 +1,21 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ["latin"], display: "swap" });
 const SITE_NAME = "GuideByCity";
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://guidebycity.com";
 export const metadata: Metadata = {
   title: { default: `${SITE_NAME} - City Guides, Cost of Living & Demographics`, template: `%s | ${SITE_NAME}` },
   description: "Explore 380+ US cities. Cost of living, income, housing, and city-to-city comparisons.",
-  metadataBase: new URL(SITE_URL), robots: { index: true, follow: true },
+  metadataBase: new URL(SITE_URL), robots: { index: true, follow: true, googleBot: { index: true, follow: true, "max-image-preview": "large" } },
   openGraph: { type: "website", siteName: SITE_NAME, locale: "en_US" },
 };
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
       <head>
+        <link rel="preconnect" href="https://www.googletagmanager.com" />
+        <link rel="dns-prefetch" href="https://pagead2.googlesyndication.com" />
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-FSLWGTPYZJ" />
         <script dangerouslySetInnerHTML={{ __html: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-FSLWGTPYZJ');` }} />
         <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5724806562146685" crossOrigin="anonymous" />
@@ -59,6 +61,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
               <a href="/privacy" className="hover:text-teal-600">Privacy</a>
               {" | "}
               <a href="/terms" className="hover:text-teal-600">Terms</a>
+              {" | "}
+              <a href="/disclaimer" className="hover:text-teal-600">Disclaimer</a>
               {" | "}
               <a href="/contact" className="hover:text-teal-600">Contact</a>
             </p>
