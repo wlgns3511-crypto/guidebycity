@@ -32,6 +32,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: `${label} - Demographics, Income & Housing Guide`,
     description: `${label}: median income ${fmt(z.median_income)}, median rent ${fmt(z.median_rent)}, home value ${fmt(z.median_home_value)}. Population${z.population ? ': ' + z.population.toLocaleString() : ' data'}, poverty rate ${fmtPct(z.poverty_rate)}.`,
     alternates: { canonical: `/zip/${slug}` },
+    openGraph: { url: `/zip/${slug}` },
   };
 }
 

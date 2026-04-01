@@ -37,6 +37,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: `${a.short_name} vs ${b.short_name} - City Comparison`,
     description: `Compare ${a.short_name} and ${b.short_name}. Cost of living, income, housing, and more side by side.`,
     alternates: { canonical: `/compare/${slugs}` },
+    openGraph: { url: `/compare/${slugs}` },
   };
 }
 

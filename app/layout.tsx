@@ -8,8 +8,7 @@ export const metadata: Metadata = {
   title: { default: `${SITE_NAME} - City Guides, Cost of Living & Demographics`, template: `%s | ${SITE_NAME}` },
   description: "Explore 380+ US cities. Cost of living, income, housing, and city-to-city comparisons.",
   metadataBase: new URL(SITE_URL), robots: { index: true, follow: true, googleBot: { index: true, follow: true, "max-image-preview": "large" } },
-  alternates: { canonical: "/" },
-  openGraph: { type: "website", siteName: SITE_NAME, url: SITE_URL, locale: "en_US" },
+  openGraph: { type: "website", siteName: SITE_NAME, locale: "en_US" },
   twitter: { card: "summary_large_image" },
   other: { "google-adsense-account": "ca-pub-5724806562146685" },
 };

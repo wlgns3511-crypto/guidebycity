@@ -5,7 +5,12 @@ interface Props { params: Promise<{ slug: string }> }
 export function generateStaticParams() { return getAllStates().map((s) => ({ slug: s.toLowerCase() })); }
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  return { title: `Cities in ${slug.toUpperCase()}`, description: `Browse cities in ${slug.toUpperCase()} with cost of living and income data.` };
+  return {
+    title: `Cities in ${slug.toUpperCase()}`,
+    description: `Browse cities in ${slug.toUpperCase()} with cost of living and income data.`,
+    alternates: { canonical: `/state/${slug}` },
+    openGraph: { url: `/state/${slug}` },
+  };
 }
 export default async function StatePage({ params }: Props) {
   const { slug } = await params;

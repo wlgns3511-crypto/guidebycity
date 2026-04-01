@@ -37,6 +37,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: `${c.short_name} City Guide - Cost of Living, Income & Housing`,
     description: `${c.short_name} guide: cost of living index ${fmtIdx(c.cost_index)}, median income ${fmt(c.median_income)}, median rent ${fmt(c.median_rent)}.`,
     alternates: { canonical: `/city/${slug}` },
+    openGraph: { url: `/city/${slug}` },
   };
 }
 
