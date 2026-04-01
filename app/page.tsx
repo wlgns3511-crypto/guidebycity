@@ -1,7 +1,9 @@
 import { getMostExpensive, getCheapest, getHighestIncome, countCities, getAllStates } from "@/lib/db";
 import type { Metadata } from "next";
 
-export const metadata: Metadata = { alternates: { canonical: "/" } };
+export const metadata: Metadata = { alternates: { canonical: "/" },
+  openGraph: { url: "/" },
+};
 
 
 function fmt(v: number | null): string { return v ? '$' + v.toLocaleString('en-US') : 'N/A'; }

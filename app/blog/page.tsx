@@ -6,6 +6,7 @@ export const metadata: Metadata = {
   description:
     "Expert guides on moving to a new city, researching neighborhoods, city rankings, and finding the best place to live for your lifestyle and budget.",
   alternates: { canonical: "/blog/" },
+  openGraph: { url: "/blog/" },
 };
 
 function formatDate(dateStr: string) {

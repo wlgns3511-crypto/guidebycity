@@ -1,6 +1,8 @@
 import { getAllCities } from "@/lib/db";
 import type { Metadata } from "next";
-export const metadata: Metadata = { title: "All Cities", description: "Browse 380+ US cities with cost of living and income data.", alternates: { canonical: "/city/" } };
+export const metadata: Metadata = { title: "All Cities", description: "Browse 380+ US cities with cost of living and income data.", alternates: { canonical: "/city/" },
+  openGraph: { url: "/city/" },
+};
 export default function CitiesPage() {
   const cities = getAllCities();
   return (

@@ -5,6 +5,7 @@ export const metadata: Metadata = {
   title: "Compare Cities",
   description: "Compare US cities side by side — cost of living, income, rent, and housing.",
   alternates: { canonical: "/compare/" },
+  openGraph: { url: "/compare/" },
 };
 
 export default function ComparePage() {

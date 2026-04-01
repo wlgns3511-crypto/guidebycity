@@ -4,6 +4,7 @@ import { CostCompareCalculator } from "@/components/CostCompareCalculator";
 export const metadata: Metadata = {
   title: "Cost Compare Calculator - Embeddable Widget",
   robots: "noindex, nofollow",
+  openGraph: { url: "/embed/cost-compare/" },
 };
 
 export default function EmbedCostComparePage() {
