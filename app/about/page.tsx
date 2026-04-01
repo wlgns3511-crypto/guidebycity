@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "About GuideByCity",
   description: "Learn about GuideByCity, our mission, and data sources.",
+  alternates: { canonical: "/about/" },
 };
 
 export default function AboutPage() {

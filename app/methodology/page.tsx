@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Our Methodology",
   description: "Learn how CityGuideFacts collects, processes, and verifies city demographics, weather, and cost comparisons.",
+  alternates: { canonical: "/methodology/" },
 };
 
 export default function MethodologyPage() {

@@ -261,7 +261,7 @@ export default async function CityPage({ params }: Props) {
         { name: "BLS", url: "https://www.bls.gov" },
       ]} />
 
-      <CrossSiteLinks current="CityGuide" />
+      <CrossSiteLinks current="GuideByCity" />
 
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({ ...breadcrumbSchema(breadcrumbs), dateModified: "2026-03-31", author: { "@type": "Organization", name: "DataPeek" } }) }} />
       {faqs.length > 0 && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({ ...faqSchema(faqs), dateModified: "2026-03-31", author: { "@type": "Organization", name: "DataPeek" } }) }} />}
