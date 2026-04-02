@@ -20,7 +20,7 @@ function parseSlugs(s: string): [string, string] | null {
 function fmt(v: number | null): string { return v ? '$' + v.toLocaleString('en-US') : 'N/A'; }
 function fmtIdx(v: number | null): string { return v ? v.toFixed(1) : '-'; }
 
-export const dynamicParams = true;
+export const dynamicParams = false;
 export const revalidate = false;
 
 export async function generateStaticParams() {
