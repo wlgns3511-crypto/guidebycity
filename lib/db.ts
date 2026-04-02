@@ -67,6 +67,40 @@ export function searchCities(query: string, limit = 30): City[] {
   `).all('%' + q + '%', '%' + q + '%', '%' + q + '%', limit) as City[];
 }
 
+// --- Ranking helpers ---
+
+export function getCostRank(slug: string): { rank: number; total: number; pctile: number } {
+  const total = (getDb().prepare("SELECT COUNT(*) as c FROM cities WHERE cost_index IS NOT NULL").get() as { c: number }).c;
+  const city = getCityBySlug(slug);
+  if (!city || city.cost_index == null) return { rank: 0, total, pctile: 0 };
+  // Rank 1 = most expensive
+  const moreExpensive = (getDb().prepare(
+    "SELECT COUNT(*) as c FROM cities WHERE cost_index IS NOT NULL AND cost_index > ?"
+  ).get(city.cost_index) as { c: number }).c;
+  const rank = moreExpensive + 1;
+  return { rank, total, pctile: Math.round((1 - rank / total) * 100) };
+}
+
+export function getIncomeRank(slug: string): { rank: number; total: number } {
+  const total = (getDb().prepare("SELECT COUNT(*) as c FROM cities WHERE median_income IS NOT NULL").get() as { c: number }).c;
+  const city = getCityBySlug(slug);
+  if (!city || city.median_income == null) return { rank: 0, total };
+  const higher = (getDb().prepare(
+    "SELECT COUNT(*) as c FROM cities WHERE median_income IS NOT NULL AND median_income > ?"
+  ).get(city.median_income) as { c: number }).c;
+  return { rank: higher + 1, total };
+}
+
+export function getNationalAvgIncome(): number {
+  const row = getDb().prepare("SELECT AVG(median_income) as avg FROM cities WHERE median_income IS NOT NULL").get() as { avg: number };
+  return Math.round(row.avg);
+}
+
+export function getNationalAvgCost(): number {
+  const row = getDb().prepare("SELECT AVG(cost_index) as avg FROM cities WHERE cost_index IS NOT NULL").get() as { avg: number };
+  return Math.round(row.avg * 10) / 10;
+}
+
 export function countCities(): number {
   return (getDb().prepare('SELECT COUNT(*) as c FROM cities').get() as { c: number }).c;
 }
