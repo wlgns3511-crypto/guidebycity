@@ -15,6 +15,7 @@ import { DidYouKnow } from "@/components/DidYouKnow";
 import { DataSourceBadge } from "@/components/DataSourceBadge";
 import { CrossSiteLinks } from "@/components/CrossSiteLinks";
 import { InsightCards } from "@/components/InsightCards";
+import { CostBreakdownBar } from "@/components/CostBreakdownBar";
 
 interface Props { params: Promise<{ slug: string }> }
 
@@ -77,6 +78,8 @@ export default async function CityPage({ params }: Props) {
       <EditorNote note={`This guide covers key livability metrics for ${c.short_name}, including cost of living, income levels, housing costs, and climate data to help you evaluate whether this city is right for you.`} />
 
       <InsightCards city={c} />
+
+      <CostBreakdownBar housing={c.housing_index} goods={c.goods_index} utilities={c.utilities_index} costIndex={c.cost_index} />
 
       <div className="bg-teal-50 rounded-lg p-6 mb-6">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
