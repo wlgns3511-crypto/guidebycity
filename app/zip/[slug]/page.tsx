@@ -10,11 +10,11 @@ interface Props { params: Promise<{ slug: string }> }
 function fmt(v: number | null): string { return v ? '$' + v.toLocaleString('en-US') : 'N/A'; }
 function fmtPct(v: number | null): string { return v !== null && v !== undefined ? (v * 100).toFixed(1) + '%' : 'N/A'; }
 
-export const dynamicParams = false;
-export const revalidate = false; // 24 hours
+export const dynamicParams = true;
+export const revalidate = 86400;
 
 export async function generateStaticParams() {
-  // Only pre-render top 500 by population; rest served via ISR
+  // Keep a hot set pre-rendered; the rest are served on demand via ISR.
   const zips = getAllZipGuides().slice(0, 500);
   return zips.map((z) => ({ slug: z.slug }));
 }
@@ -31,8 +31,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: `${label} - Demographics, Income & Housing Guide`,
     description: `${label}: median income ${fmt(z.median_income)}, median rent ${fmt(z.median_rent)}, home value ${fmt(z.median_home_value)}. Population${z.population ? ': ' + z.population.toLocaleString() : ' data'}, poverty rate ${fmtPct(z.poverty_rate)}.`,
-    alternates: { canonical: `/zip/${slug}` },
-    openGraph: { url: `/zip/${slug}` },
+    alternates: { canonical: `/zip/${slug}/` },
+    openGraph: { url: `/zip/${slug}/` },
   };
 }
 
@@ -80,7 +80,7 @@ export default async function ZipGuidePage({ params }: Props) {
         ))}
       </nav>
 
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema(faqs)) }} />
+      {faqs.length > 0 && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema(faqs)) }} />}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema(crumbs.map(c => ({ name: c.label, url: c.href || "" })))) }} />
 
       <header className="mb-8">

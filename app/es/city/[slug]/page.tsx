@@ -12,11 +12,11 @@ interface Props { params: Promise<{ slug: string }> }
 function fmt(v: number | null): string { return v ? '$' + v.toLocaleString('en-US') : 'N/A'; }
 function fmtIdx(v: number | null): string { return v ? v.toFixed(1) : 'N/A'; }
 
-export const dynamicParams = false;
-export const revalidate = false;
+export const dynamicParams = true;
+export const revalidate = 86400;
 
 export async function generateStaticParams() {
-  return getAllCities().slice(0, 300).map((c) => ({ slug: c.slug }));
+  return getAllCities().map((c) => ({ slug: c.slug }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {

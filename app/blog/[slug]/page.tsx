@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import { getAllPosts, getPostBySlug } from "@/lib/blog";
 import { AdSlot } from "@/components/AdSlot";
 
+export const dynamicParams = false;
+
 export function generateStaticParams() {
   return getAllPosts().map((p) => ({ slug: p.slug }));
 }

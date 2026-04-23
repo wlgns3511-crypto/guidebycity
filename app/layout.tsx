@@ -1,9 +1,25 @@
 import type { Metadata } from "next";
+import { headers } from 'next/headers';
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { UpgradeAnalytics } from "@/components/upgrades/UpgradeAnalytics";
 const inter = Inter({ subsets: ["latin"], display: "swap" });
 const SITE_NAME = "GuideByCity";
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://guidebycity.com";
+
+const ROOT_LOCALES = ['es'] as const;
+type RootLocale = (typeof ROOT_LOCALES)[number];
+const ROOT_ALTERNATE_LANGUAGES = {
+  en: `${SITE_URL}/`,
+  es: `${SITE_URL}/es/`,
+  'x-default': `${SITE_URL}/`,
+} as const;
+
+function getHtmlLang(pathname: string | null): string {
+  const locale = pathname?.split('/').filter(Boolean)[0] as RootLocale | undefined;
+  return locale && ROOT_LOCALES.includes(locale) ? locale : 'en';
+}
+
 export const metadata: Metadata = {
   title: { default: `${SITE_NAME} - City Guides, Cost of Living & Demographics`, template: `%s | ${SITE_NAME}` },
   description: "Explore 380+ US cities. Cost of living, income, housing, and city-to-city comparisons.",
@@ -12,9 +28,12 @@ export const metadata: Metadata = {
   twitter: { card: "summary_large_image" },
   other: { "google-adsense-account": "ca-pub-5724806562146685" },
 };
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  const headerStore = await headers();
+  const pathname = headerStore.get('x-pathname');
+  const htmlLang = getHtmlLang(pathname);
   return (
-    <html lang="en">
+    <html lang={htmlLang}>
       <head>
         <link rel="preconnect" href="https://www.googletagmanager.com" />
         <link rel="dns-prefetch" href="https://pagead2.googlesyndication.com" />
@@ -41,12 +60,17 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
               "name": "GuideByCity",
               "url": "https://guidebycity.com",
               "description": "Explore 380+ US cities. Cost of living, income, housing, and city-to-city comparisons.",
-              "sameAs": ["https://vocabwize.com", "https://vocablibre.com", "https://wortwize.com", "https://kalimawize.com", "https://dicionariowize.com", "https://kotobapeek.com", "https://salarybycity.com", "https://netpaypeek.com", "https://wagepeek.com", "https://costbycity.com", "https://fairrentwize.com", "https://propertytaxpeek.com", "https://degreewize.com", "https://nameblooms.com", "https://myschoolpeek.com", "https://medcheckwize.com", "https://medcostpeek.com", "https://eldercarepeek.com", "https://ingredipeek.com", "https://caloriewize.com", "https://powerbillpeek.com", "https://sunpowerpeek.com", "https://shipcalcwize.com", "https://tariffpeek.com", "https://visapeek.com", "https://zippeek.com", "https://calcpeek.com", "https://datapeekfacts.com", "https://homepricepeek.com", "https://safecitypeek.com"]
+              "parentOrganization": {
+                "@type": "Organization",
+                "name": "DataPeek Research Network",
+                "url": "https://datapeekfacts.com"
+              }
             }
           ]
         }) }} />
       </head>
       <body className={`${inter.className} antialiased bg-white text-slate-900 min-h-screen flex flex-col`}>
+        <UpgradeAnalytics />
         <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:px-4 focus:py-2 focus:bg-white focus:text-blue-600 focus:border focus:rounded">Skip to content</a>
         <header className="border-b border-slate-200">
           <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
@@ -54,14 +78,15 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             <nav className="flex gap-4 text-sm">
               <a href="/city/" className="hover:text-teal-600">Cities</a>
               <a href="/compare/" className="hover:text-teal-600">Compare</a>
-              <a href="/blog/" className="hover:text-teal-600">Guides</a>
+              <a href="/guide/" className="hover:text-teal-600">Guides</a>
+              <a href="/blog/" className="hover:text-teal-600">Articles</a>
             </nav>
           </div>
         </header>
         <main id="main-content" className="flex-1 max-w-5xl mx-auto px-4 py-8 w-full">{children}</main>
         <footer className="border-t border-slate-200 mt-16">
           <div className="max-w-5xl mx-auto px-4 py-6 text-sm text-slate-500">
-            <p>Data from Bureau of Economic Analysis and U.S. Census Bureau.</p>
+            <p>Built with data from Bureau of Economic Analysis and U.S. Census Bureau.</p>
             <p className="mt-2">
               <a href="/about/" className="hover:text-teal-600">About</a>
               {" | "}
@@ -74,15 +99,16 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
               <a href="/contact/" className="hover:text-teal-600">Contact</a>
             </p>
             <div className="mt-4 pt-4 border-t border-slate-100">
-              <p className="text-xs font-medium text-slate-400 uppercase tracking-wider mb-2">Related Resources</p>
+              <p className="text-xs font-medium text-slate-400 uppercase tracking-wider mb-2">Other Data Tools</p>
               <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs">
-                <a href="https://costbycity.com" className="hover:text-teal-600">Cost of Living</a>
-                <a href="https://salarybycity.com" className="hover:text-teal-600">Salaries</a>
-                <a href="https://zippeek.com" className="hover:text-teal-600">ZIP Codes</a>
-                <a href="https://fairrentwize.com" className="hover:text-teal-600">Fair Rents</a>
+                <a href="https://costbycity.com" rel="nofollow" className="hover:text-teal-600">Cost of Living</a>
+                <a href="https://salarybycity.com" rel="nofollow" className="hover:text-teal-600">Salaries</a>
+                <a href="https://zippeek.com" rel="nofollow" className="hover:text-teal-600">ZIP Codes</a>
+                <a href="https://fairrentwize.com" rel="nofollow" className="hover:text-teal-600">Fair Rents</a>
               </div>
             </div>
-            <p className="mt-1">&copy; {new Date().getFullYear()} {SITE_NAME}. All rights reserved.</p>
+            <p className="mt-4 text-xs text-slate-400">Your city-by-city guide to local costs, services, and quality of life.</p>
+            <p className="mt-2">&copy; {new Date().getFullYear()} {SITE_NAME} &mdash; A free public data resource.</p>
           </div>
         </footer>
       </body>

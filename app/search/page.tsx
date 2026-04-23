@@ -4,7 +4,8 @@ import { searchCities, getMostExpensive, getCheapest } from "@/lib/db";
 export const metadata: Metadata = {
   title: "Search City Guides — Cost of Living, Income & Housing",
   description: "Search 380+ US city guides. Find cost of living, median income, housing costs, and quality of life data.",
-  alternates: { canonical: "/search" },
+  robots: { index: false, follow: true },
+  alternates: { canonical: "/search/" },
   openGraph: { url: "/search/" },
 };
 

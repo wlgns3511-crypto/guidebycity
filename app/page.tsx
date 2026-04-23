@@ -1,4 +1,5 @@
 import { getMostExpensive, getCheapest, getHighestIncome, countCities, getAllStates } from "@/lib/db";
+import { PopularEntities } from "@/components/upgrades/PopularEntities";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = { alternates: { canonical: "/" },
@@ -10,11 +11,17 @@ function fmt(v: number | null): string { return v ? '$' + v.toLocaleString('en-U
 function fmtIdx(v: number | null): string { return v ? v.toFixed(1) : 'N/A'; }
 
 export default function Home() {
-  const expensive = getMostExpensive(10);
+  const expensive = getMostExpensive(12);
   const cheapest = getCheapest(10);
   const richest = getHighestIncome(10);
   const total = countCities();
   const states = getAllStates();
+
+  const popularItems = expensive.map(c => ({
+    name: c.short_name,
+    href: `/city/${c.slug}/`,
+    stat: c.cost_index ? `Index ${c.cost_index.toFixed(1)}` : undefined,
+  }));
 
   return (
     <div>
@@ -24,6 +31,15 @@ export default function Home() {
           Explore {total}+ US cities. Cost of living, income, housing costs, and side-by-side comparisons.
         </p>
       </section>
+
+      <PopularEntities
+        heading="Popular City Guides"
+        subheading="Top cities by cost of living index"
+        items={popularItems}
+        columns={3}
+        viewAllHref="/rankings"
+        viewAllLabel="View all rankings →"
+      />
 
       <section className="mb-6">
         <h2 className="text-lg font-semibold mb-3 text-center">Browse by State</h2>

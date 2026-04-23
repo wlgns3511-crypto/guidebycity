@@ -58,6 +58,15 @@ export function getTopComparisons(limit = 5000): { slugA: string; slugB: string 
     LIMIT ?
   `).all(limit) as { slugA: string; slugB: string }[];
 }
+
+export function getAllComparisons(): { slugA: string; slugB: string }[] {
+  return getDb().prepare(`
+    SELECT a.slug as slugA, b.slug as slugB
+    FROM cities a, cities b
+    WHERE a.fips < b.fips AND a.cost_index IS NOT NULL AND b.cost_index IS NOT NULL
+    ORDER BY ABS(a.cost_index - b.cost_index) DESC
+  `).all() as { slugA: string; slugB: string }[];
+}
 export function searchCities(query: string, limit = 30): City[] {
   const q = query.trim().toLowerCase();
   if (!q) return [];

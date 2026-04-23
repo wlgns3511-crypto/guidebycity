@@ -1,6 +1,7 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import type { Metadata } from "next";
-import { getCityBySlug, getTopComparisons } from "@/lib/db";
+import { getCityBySlug } from "@/lib/db";
+import { STATIC_COMPARISON_SLUGS, STATIC_COMPARISON_SET, toCanonicalComparisonSlug } from "@/lib/compare-whitelist";
 import { AdSlot } from "@/components/AdSlot";
 import { faqSchema } from "@/lib/schema";
 
@@ -21,10 +22,14 @@ function fmt(v: number | null): string { return v ? '$' + v.toLocaleString('en-U
 function fmtIdx(v: number | null): string { return v ? v.toFixed(1) : '-'; }
 
 export const dynamicParams = false;
-export const revalidate = false;
+export const revalidate = 86400;
 
 export async function generateStaticParams() {
-  return getTopComparisons(2000).map((p) => { const [a, b] = [p.slugA, p.slugB].sort(); return { slugs: `${a}-vs-${b}` }; });
+  return STATIC_COMPARISON_SLUGS.flatMap((slugs) => {
+    const parsed = parseSlugs(slugs);
+    if (!parsed) return [];
+    return [{ slugs }, { slugs: `${parsed[1]}-vs-${parsed[0]}` }];
+  });
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -33,11 +38,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!p) return {};
   const a = getCityBySlug(p[0]), b = getCityBySlug(p[1]);
   if (!a || !b) return {};
+  const canonicalSlugs = toCanonicalComparisonSlug(a.slug, b.slug);
+  if (!STATIC_COMPARISON_SET.has(canonicalSlugs)) return {};
   return {
     title: `${a.short_name} vs ${b.short_name} - City Comparison`,
     description: `Compare ${a.short_name} and ${b.short_name}. Cost of living, income, housing, and more side by side.`,
-    alternates: { canonical: `/compare/${slugs}` },
-    openGraph: { url: `/compare/${slugs}` },
+    alternates: { canonical: `/compare/${canonicalSlugs}/` },
+    openGraph: { url: `/compare/${canonicalSlugs}/` },
   };
 }
 
@@ -47,6 +54,11 @@ export default async function ComparePage({ params }: Props) {
   if (!p) notFound();
   const a = getCityBySlug(p[0]), b = getCityBySlug(p[1]);
   if (!a || !b) notFound();
+  const canonicalSlugs = toCanonicalComparisonSlug(a.slug, b.slug);
+  if (!STATIC_COMPARISON_SET.has(canonicalSlugs)) notFound();
+  if (canonicalSlugs !== slugs) {
+    redirect(`/compare/${canonicalSlugs}/`);
+  }
 
   const cheaper = (a.cost_index || 100) < (b.cost_index || 100) ? a : b;
   const rows: [string, string, string][] = [
@@ -93,7 +105,7 @@ export default async function ComparePage({ params }: Props) {
         <a href={`/city/${p[0]}`} className="text-teal-600 hover:underline">{a.short_name} guide &rarr;</a>
         <a href={`/city/${p[1]}`} className="text-teal-600 hover:underline">{b.short_name} guide &rarr;</a>
       </div>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema(faqs)) }} />
+      {faqs.length > 0 && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema(faqs)) }} />}
     </div>
   );
 }
