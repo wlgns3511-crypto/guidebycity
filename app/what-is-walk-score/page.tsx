@@ -172,10 +172,9 @@ export default function WhatIsWalkScorePage() {
           of 55 can easily contain blocks that score 95 and other
           blocks that score 20. On our city pages, we report the
           Walk Score for the functional downtown or urban core, which
-          is usually the highest-walking district. For comparing
-          whole metros, use the{" "}
-          <a href="/compare/">Compare Cities</a> hub, which pairs
-          walkability context with cost of living and income.
+          is usually the highest-walking district. To compare
+          whole metros, look at walkability alongside the cost of
+          living and income data on each city page.
         </p>
         <p>
           <strong>Second, the score is a starting point, not a
@@ -292,9 +291,8 @@ export default function WhatIsWalkScorePage() {
           <a href="/methodology/">our methodology</a> so you know
           what else we measure and what we intentionally leave out.
           From there, browse{" "}
-          <a href="/city/">all cities</a> or use{" "}
-          <a href="/compare/">Compare Cities</a> to pair walkability
-          with the cost of living, income, and climate data that
+          <a href="/city/">all cities</a> to find walkability
+          alongside the cost of living, income, and climate data that
           actually determine whether a place fits your life.
         </p>
 

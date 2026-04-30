@@ -1,6 +1,15 @@
 import { ImageResponse } from 'next/og';
 import { getCityBySlug, getAllCities, getWeather } from '@/lib/db';
 
+// HCU Phase C+ (2026-04-26): page.tsx 가 dynamicParams=false + getAllCities()
+// (전체 prebuild) 인데 OG 는 slice(0, 1000) 만 prebuild → orphan slug
+// (1001번째~) 가 segment constraint inherit 으로 NoFallbackError → 502.
+// degreewize 4/26 동일 패턴 fix. dynamicParams=true 로 외 슬러그 on-demand,
+// DB miss 는 page 와 정책 일치하게 404 Response 반환 (notFound() 는 metadata
+// route 에서 200 으로 떨어짐).
+export const runtime = 'nodejs';
+export const dynamicParams = true;
+
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
@@ -13,12 +22,7 @@ export default async function Image({ params }: { params: Promise<{ slug: string
   const c = getCityBySlug(slug);
 
   if (!c) {
-    return new ImageResponse(
-      <div style={{ display: 'flex', width: '100%', height: '100%', backgroundColor: '#0284c7', color: 'white', alignItems: 'center', justifyContent: 'center', fontFamily: 'sans-serif' }}>
-        <div style={{ display: 'flex', fontSize: 48 }}>GUIDEBYCITY</div>
-      </div>,
-      { ...size }
-    );
+    return new Response(null, { status: 404 });
   }
 
   const weather = getWeather(c);

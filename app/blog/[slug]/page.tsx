@@ -150,12 +150,7 @@ export default async function BlogPostPage({
           >
             Browse Cities
           </a>
-          <a
-            href="/compare/"
-            className="text-sm px-4 py-2 bg-white border border-teal-300 text-teal-700 rounded-lg hover:bg-teal-50 font-medium"
-          >
-            Compare Cities
-          </a>
+          {/* 2026-04-28 — 'Compare Cities' 버튼 제거 (AdSense scaled-content remediation) */}
           <a
             href="/"
             className="text-sm px-4 py-2 bg-white border border-slate-200 text-slate-700 rounded-lg hover:bg-slate-50 font-medium"

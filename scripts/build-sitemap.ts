@@ -39,6 +39,8 @@ import { getAllCities, getAllStates } from '../lib/db';
 import { STATIC_COMPARISON_SLUGS } from '../lib/compare-whitelist';
 import { getAllPosts } from '../lib/blog';
 import { getAllGuides } from '../lib/guides';
+import { RANKING_TYPES } from '../lib/rankings';
+import { HAZARD_TOPICS } from '../lib/hazard-topics';
 
 const SITE_URL = 'https://guidebycity.com';
 const NOW = new Date().toISOString().split('T')[0];
@@ -85,20 +87,37 @@ for (const s of getAllStates()) {
   add({ url: `${SITE_URL}/state/${s.toLowerCase()}/`, priority: '0.8', changefreq: 'monthly' });
 }
 
+// 2026-04-29 HCU 5-chunk patch — /rankings/ + /risk/ topic clusters.
+// /rankings/: 10 single-axis lists (cost, income, housing, rent burden,
+// utilities + risk-based highest-risk-cities & safest-cities).
+// /risk/: 5 hazard topics (tornado, hurricane, wildfire, earthquake, flood)
+// drawing on FEMA NRI county-level data — guidebycity unique-data lever vs
+// costbycity which only has BEA RPP overlap.
+add({ url: `${SITE_URL}/rankings/`, priority: '0.85', changefreq: 'monthly' });
+for (const t of RANKING_TYPES) {
+  add({ url: `${SITE_URL}/rankings/${t}/`, priority: '0.8', changefreq: 'monthly' });
+}
+add({ url: `${SITE_URL}/risk/`, priority: '0.85', changefreq: 'monthly' });
+for (const h of HAZARD_TOPICS) {
+  add({ url: `${SITE_URL}/risk/${h}/`, priority: '0.8', changefreq: 'monthly' });
+}
+
 // Cities: real entity pages, earn GSC impressions (boise 47, burlington 33,
 // asheville 29). All 387 MSAs kept — this is IA not cardinality bloat.
 for (const c of getAllCities()) {
   add({ url: `${SITE_URL}/city/${c.slug}/`, priority: '0.7', changefreq: 'monthly' });
 }
 
-// ─── /compare/ pairs RE-ADDED 2026-04-22 (GSC evidence) ──────────────────
-// Excluded 2026-04-17 as "doorway risk" but GSC showed ALL 5 clicks came
-// from /compare/ pairs despite exclusion. Re-add STATIC_COMPARISON_SLUGS
-// (CAP=100) — route uses dynamicParams=false so these 100 are also the
-// only ones that render, 404-safe.
-for (const slugs of STATIC_COMPARISON_SLUGS) {
-  add({ url: `${SITE_URL}/compare/${slugs}/`, priority: '0.7', changefreq: 'monthly' });
-}
+// ─── /compare/ pairs DROPPED 2026-04-26 (AdSense scaled-content remediation) ──
+// Precedent: nameblooms /middle-names/ AdSense policy violation 2026-04-26.
+// 4/22 GSC-evidence revival was overridden — page.tsx now sets robots:
+// {index:false, follow:true}. Announcing noindex'd derivative pages in sitemap
+// is a contradiction + crawl-budget waste. Pages still render
+// (dynamicParams=false, 404-safe) for direct visitors.
+// ~105 derivative URLs removed.
+// for (const slugs of STATIC_COMPARISON_SLUGS) {
+//   add({ url: `${SITE_URL}/compare/${slugs}/`, priority: '0.7', changefreq: 'monthly' });
+// }
 
 // ─── /zip/ guide leaves DROPPED 2026-04-22 (HCU defense) ─────────────────
 // 32,286 synthetic ZIP guide pages caused cardinality collapse. Route still
@@ -119,9 +138,11 @@ for (const p of getAllPosts()) {
 }
 
 // ─── Cardinality guard ────────────────────────────────────────────────────
-if (entries.length > 700 && !process.env.SITEMAP_LARGE_OK) {
+// 2026-04-29 budget bumped 700→750: +10 /rankings/ + 5 /risk/ + 2 index = 17
+// new entries planned. Same anti-bloat invariant — /zip/ + /es/city/ stay out.
+if (entries.length > 750 && !process.env.SITEMAP_LARGE_OK) {
   throw new Error(
-    `guidebycity sitemap has ${entries.length.toLocaleString()} URLs — Option B+ budget is ~580.\n` +
+    `guidebycity sitemap has ${entries.length.toLocaleString()} URLs — Option B+ budget is ~580 (post-2026-04-29: ~600).\n` +
       `Did /zip/ (32,286) or /es/city/ (387) get re-added?\n` +
       `That's exactly the loop that caused the original cardinality collapse.\n` +
       `Run with SITEMAP_LARGE_OK=1 if you genuinely meant to expand the tier.`,

@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { headers } from 'next/headers';
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { UpgradeAnalytics } from "@/components/upgrades/UpgradeAnalytics";
@@ -7,18 +6,11 @@ const inter = Inter({ subsets: ["latin"], display: "swap" });
 const SITE_NAME = "GuideByCity";
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://guidebycity.com";
 
-const ROOT_LOCALES = ['es'] as const;
-type RootLocale = (typeof ROOT_LOCALES)[number];
 const ROOT_ALTERNATE_LANGUAGES = {
   en: `${SITE_URL}/`,
   es: `${SITE_URL}/es/`,
   'x-default': `${SITE_URL}/`,
 } as const;
-
-function getHtmlLang(pathname: string | null): string {
-  const locale = pathname?.split('/').filter(Boolean)[0] as RootLocale | undefined;
-  return locale && ROOT_LOCALES.includes(locale) ? locale : 'en';
-}
 
 export const metadata: Metadata = {
   title: { default: `${SITE_NAME} - City Guides, Cost of Living & Demographics`, template: `%s | ${SITE_NAME}` },
@@ -28,12 +20,9 @@ export const metadata: Metadata = {
   twitter: { card: "summary_large_image" },
   other: { "google-adsense-account": "ca-pub-5724806562146685" },
 };
-export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  const headerStore = await headers();
-  const pathname = headerStore.get('x-pathname');
-  const htmlLang = getHtmlLang(pathname);
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang={htmlLang}>
+    <html lang="en">
       <head>
         <link rel="preconnect" href="https://www.googletagmanager.com" />
         <link rel="dns-prefetch" href="https://pagead2.googlesyndication.com" />
@@ -77,7 +66,10 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
             <a href="/" className="text-xl font-bold text-teal-700">{SITE_NAME}</a>
             <nav className="flex gap-4 text-sm">
               <a href="/city/" className="hover:text-teal-600">Cities</a>
-              <a href="/compare/" className="hover:text-teal-600">Compare</a>
+              {/* 2026-04-28 — 'Compare' nav 제거 (AdSense scaled-content remediation).
+                  /compare/* 트리는 4/18 doorway-thin 판단으로 noindex 처리됨.
+                  Sitewide layout 링크는 모든 indexable 페이지에 박히므로 AdSense
+                  리뷰어가 noindex 트리로 직행. 직접 URL 입력 시엔 페이지 그대로 작동. */}
               <a href="/guide/" className="hover:text-teal-600">Guides</a>
               <a href="/blog/" className="hover:text-teal-600">Articles</a>
             </nav>

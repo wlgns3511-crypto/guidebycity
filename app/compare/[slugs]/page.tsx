@@ -45,6 +45,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     description: `Compare ${a.short_name} and ${b.short_name}. Cost of living, income, housing, and more side by side.`,
     alternates: { canonical: `/compare/${canonicalSlugs}/` },
     openGraph: { url: `/compare/${canonicalSlugs}/` },
+    // 2026-04-26 AdSense scaled-content remediation: noindex derivative compare pages.
+    // Precedent: nameblooms /middle-names/ policy violation 2026-04-26.
+    robots: { index: false, follow: true },
   };
 }
 

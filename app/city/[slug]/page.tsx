@@ -26,6 +26,7 @@ import { TrustBlock } from "@/components/upgrades/TrustBlock";
 import { DecisionNext } from "@/components/upgrades/DecisionNext";
 import { RelatedEntities } from '@/components/upgrades/RelatedEntities';
 import { TableOfContents } from '@/components/upgrades/TableOfContents';
+import { getRiskByCbsa, buildRiskCommentary, hazardLabel, hazardTitle, type RiskStatus } from '@/lib/risk-facts';
 
 interface Props { params: Promise<{ slug: string }> }
 
@@ -71,19 +72,23 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return d > 0.03 && d < 0.8;
   }) || stateCities.find((p) => p.cost_index) || stateCities[0];
 
+  // Title retune 2026-04-24: GSC showed 632 queries, 0 clicks — dominant
+  // pattern is "cost of living in [city]" but old title led with "City Guide".
+  // Lead with the query, keep peer/rent context compact in the tail.
+  const year = new Date().getUTCFullYear();
   let title: string;
   let description: string;
-  if (peer && peer.cost_index && c.cost_index) {
-    const pct = Math.round(((peer.cost_index - c.cost_index) / peer.cost_index) * 100);
-    const absPct = Math.abs(pct);
-    const dir = pct > 0 ? 'cheaper' : 'pricier';
-    title = `${c.short_name} City Guide: COL ${fmtIdx(c.cost_index)} vs ${peer.short_name} ${fmtIdx(peer.cost_index)}`;
+  if (c.cost_index && c.median_rent) {
+    title = `Cost of Living in ${c.short_name} (${year}): COL ${fmtIdx(c.cost_index)}, Rent ${fmt(c.median_rent)}`;
     description = buildCityTopAnswer(c);
-  } else if (peer) {
-    title = `${c.short_name} City Guide: Income ${fmt(c.median_income)} vs ${peer.short_name} ${fmt(peer.median_income)}`;
+  } else if (c.cost_index && c.median_income) {
+    title = `Cost of Living in ${c.short_name} (${year}): COL ${fmtIdx(c.cost_index)}, Income ${fmt(c.median_income)}`;
+    description = buildCityTopAnswer(c);
+  } else if (peer && peer.cost_index && c.cost_index) {
+    title = `Cost of Living in ${c.short_name} (${year}) vs ${peer.short_name}`;
     description = buildCityTopAnswer(c);
   } else {
-    title = `${c.short_name} City Guide: COL ${fmtIdx(c.cost_index)}, Income ${fmt(c.median_income)}`;
+    title = `Cost of Living in ${c.short_name} (${year})`;
     description = buildCityTopAnswer(c);
   }
   const gate = getDbPageGate({
@@ -113,6 +118,8 @@ export default async function CityPage({ params }: Props) {
   const weather = getWeather(c);
   const analysis = analyzeCity(c, weather);
   const dataVintage = "local ACS + BEA RPP + NOAA climate snapshot";
+  const risk = getRiskByCbsa(c.fips);
+  const riskCommentary = risk ? buildRiskCommentary(slug, risk, c.short_name) : null;
   const topAnswer = buildCityTopAnswer(c);
   const autoFaqs = generateAutoFAQs(c, weather);
   const faqs = [
@@ -264,6 +271,52 @@ export default async function CityPage({ params }: Props) {
         </section>
       )}
 
+      {/* ─── Risk Profile (FEMA NRI) ──────────────────────────────────
+          2026-04-29 HCU 5-chunk patch — guidebycity unique-data section.
+          Pulls the FEMA National Risk Index for the metro's primary county
+          and renders headline / fact / context / implication. */}
+      {risk && riskCommentary && risk.riskScore != null && (() => {
+        const tone: Record<RiskStatus, { bg: string; border: string; text: string; pill: string }> = {
+          'very-high': { bg: 'bg-red-50', border: 'border-red-200', text: 'text-red-800', pill: 'bg-red-100 text-red-800' },
+          'high': { bg: 'bg-orange-50', border: 'border-orange-200', text: 'text-orange-800', pill: 'bg-orange-100 text-orange-800' },
+          'moderate': { bg: 'bg-amber-50', border: 'border-amber-200', text: 'text-amber-900', pill: 'bg-amber-100 text-amber-800' },
+          'low': { bg: 'bg-emerald-50', border: 'border-emerald-200', text: 'text-emerald-900', pill: 'bg-emerald-100 text-emerald-800' },
+          'very-low': { bg: 'bg-emerald-50', border: 'border-emerald-300', text: 'text-emerald-900', pill: 'bg-emerald-200 text-emerald-900' },
+          'unknown': { bg: 'bg-slate-50', border: 'border-slate-200', text: 'text-slate-700', pill: 'bg-slate-100 text-slate-700' },
+        };
+        const t = tone[risk.status];
+        return (
+          <section className="mb-8" id="risk-profile">
+            <h2 className="text-xl font-bold mb-3">Natural-Hazard Risk Profile</h2>
+            <div className={`rounded-xl border ${t.border} ${t.bg} p-5`}>
+              <div className="flex items-center gap-2 mb-2">
+                <span className={`inline-block px-2.5 py-1 rounded-full text-xs font-semibold ${t.pill}`}>{riskCommentary.headline}</span>
+                <span className="text-xs text-slate-500">FEMA National Risk Index · {risk.countyName}</span>
+              </div>
+              <p className={`text-sm leading-relaxed mb-3 ${t.text}`}><strong>{riskCommentary.fact}</strong></p>
+              <p className="text-sm text-slate-700 leading-relaxed mb-3">{riskCommentary.context}</p>
+              <p className="text-sm text-slate-700 leading-relaxed">{riskCommentary.implication}</p>
+
+              {risk.topHazards.length > 0 && (
+                <div className="mt-4 pt-4 border-t border-slate-200">
+                  <h3 className="text-sm font-semibold text-slate-700 mb-2">Top hazards by FEMA score</h3>
+                  <div className="grid sm:grid-cols-3 gap-2">
+                    {risk.topHazards.slice(0, 3).map((h) => (
+                      <a key={h.code} href={`/risk/${h.name}/`} className="block bg-white border border-slate-200 rounded-lg p-3 hover:border-teal-300 hover:bg-teal-50 transition">
+                        <div className="text-xs uppercase tracking-wide text-slate-500">{hazardTitle(h.name)}</div>
+                        <div className="text-sm font-semibold text-slate-800">{h.ratng}</div>
+                        <div className="text-xs text-slate-500 mt-1">Score {h.score}{h.afreq != null && h.afreq > 0 ? ` · ${h.afreq.toFixed(2)}/yr` : ''}</div>
+                      </a>
+                    ))}
+                  </div>
+                  <p className="text-xs text-slate-500 mt-3">Top hazards reflect the FEMA NRI &quot;risk score&quot; for {hazardLabel(risk.topHazards[0].name)}{risk.topHazards.length > 1 ? `, ${hazardLabel(risk.topHazards[1].name)}` : ''}{risk.topHazards.length > 2 ? `, and ${hazardLabel(risk.topHazards[2].name)}` : ''} in {risk.countyName}, the primary county for the {c.short_name} metro.</p>
+                </div>
+              )}
+            </div>
+          </section>
+        );
+      })()}
+
       {c.cost_index && (
         <CostCompareCalculator cityName={c.short_name} defaultCostIndex={c.cost_index} />
       )}
@@ -318,29 +371,8 @@ export default async function CityPage({ params }: Props) {
         </section>
       )}
 
-      {compareableState.length > 0 && (
-        <section className="mb-8">
-          <h2 className="text-xl font-bold mb-3">Compare {c.short_name} With Other {c.state} Cities</h2>
-          <div className="grid sm:grid-cols-2 gap-2 text-sm">
-            {compareableState.map((o) => {
-              const [a, b] = [slug, o.slug].sort();
-              return (<a key={o.slug} href={`/compare/${a}-vs-${b}`} className="p-3 border rounded-lg hover:bg-teal-50 text-teal-600">{c.short_name} vs {o.short_name}</a>);
-            })}
-          </div>
-        </section>
-      )}
-
-      {compareableAll.length > 0 && (
-        <section className="mb-8">
-          <h2 className="text-xl font-bold mb-3">Compare {c.short_name} With</h2>
-          <div className="grid sm:grid-cols-2 gap-2 text-sm">
-            {compareableAll.map((o) => {
-              const [a, b] = [slug, o.slug].sort();
-              return (<a key={o.slug} href={`/compare/${a}-vs-${b}`} className="p-3 border rounded-lg hover:bg-teal-50 text-teal-600">{c.short_name} vs {o.short_name}</a>);
-            })}
-          </div>
-        </section>
-      )}
+      {/* 2026-04-28 — 'Compare {city} With' 위젯 두 섹션 제거 (AdSense scaled-content remediation, /compare/* noindex).
+          state-only + all-cities. RelatedEntities가 비슷한 도시 탐색 경로 유지함. */}
 
       <RelatedEntities
         entityName={c.short_name}

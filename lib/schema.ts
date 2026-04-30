@@ -18,6 +18,35 @@ export function faqSchema(faqs: { question: string; answer: string }[]) {
   };
 }
 
+export function itemListSchema(name: string, urlPath: string, items: { name: string; url: string }[]) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name,
+    url: `${SITE_URL}${urlPath}`,
+    numberOfItems: items.length,
+    itemListElement: items.map((it, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: it.name,
+      url: `${SITE_URL}${it.url}`,
+    })),
+  };
+}
+
+export function datasetSchema(name: string, description: string, urlPath: string) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Dataset',
+    name,
+    description,
+    url: `${SITE_URL}${urlPath}`,
+    creator: { '@type': 'Organization', name: PUBLISHER.name, url: PUBLISHER.url },
+    license: 'https://creativecommons.org/licenses/by/4.0/',
+    isAccessibleForFree: true,
+  };
+}
+
 export function articleSchema(post: { title: string; description: string; slug: string; urlPath?: string; publishedAt: string; updatedAt?: string; category?: string }) {
   const articlePath = post.urlPath ?? (post.slug.includes('/') ? `/${post.slug.replace(/^\/+|\/+$/g, '')}/` : `/blog/${post.slug}/`);
   const url = `${SITE_URL}${articlePath}`;
