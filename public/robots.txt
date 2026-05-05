@@ -3,6 +3,7 @@ Allow: /
 Disallow: /api/
 Disallow: /_next/
 Disallow: /embed/
+Disallow: /es/
 # 2026-04-28 — AdSense scaled-content remediation: /compare/* (4/18 doorway-thin noindex)
 Disallow: /compare/
 

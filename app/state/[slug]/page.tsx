@@ -6,6 +6,9 @@ import { InsightBlock } from "@/components/upgrades/InsightBlock";
 import { getStateInsights } from "@/lib/state-insights";
 import { StateRich } from '@/components/state/StateRich';
 import { getStateRiskAggregate, hazardLabel, hazardTitle } from "@/lib/risk-facts";
+import { AuthorBox } from "@/components/AuthorBox";
+import { STATE_VINTAGE, PUBLISHER, SOURCE_AUTHORITIES } from "@/lib/authorship";
+import { breadcrumbSchema } from "@/lib/schema";
 
 interface Props { params: Promise<{ slug: string }> }
 export const dynamicParams = false;
@@ -212,6 +215,25 @@ export default async function StatePage({ params }: Props) {
         {' · '}
         <a href="/risk/" className="text-teal-600 hover:underline">Hazard topic pages →</a>
       </div>
+
+      <AuthorBox vintage={STATE_VINTAGE} />
+
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "AdministrativeArea",
+        name: full,
+        url: `https://guidebycity.com/state/${slug}/`,
+        description: `Cost-of-living, income, and hazard-risk profile for ${cities.length} ${full} metros, drawing on Census ACS, BEA Regional Price Parities, and FEMA NRI data.`,
+        address: { "@type": "PostalAddress", addressRegion: state, addressCountry: "US" },
+        dateModified: STATE_VINTAGE,
+        author: { "@type": "Organization", name: PUBLISHER.name, url: PUBLISHER.url },
+        publisher: { "@type": "Organization", name: PUBLISHER.name, url: PUBLISHER.url },
+        reviewedBy: SOURCE_AUTHORITIES,
+      }) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema([
+        { name: "Home", url: "/" },
+        { name: full, url: `/state/${slug}/` },
+      ])) }} />
     </div>
   );
 }

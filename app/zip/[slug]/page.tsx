@@ -1,9 +1,10 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { getAllZipGuides, getZipGuideBySlug, getZipGuidesByState } from "@/lib/db";
+import { getZipGuideBySlug, getZipGuidesByState } from "@/lib/db";
 import { breadcrumbSchema, faqSchema } from "@/lib/schema";
 import { AdSlot } from "@/components/AdSlot";
 import { FreshnessTag } from "@/components/FreshnessTag";
+import zipKeep from "@/lib/generated/zip-keep.json";
 
 interface Props { params: Promise<{ slug: string }> }
 
@@ -14,9 +15,10 @@ export const dynamicParams = false;
 export const revalidate = 86400;
 
 export async function generateStaticParams() {
-  // Keep a hot set pre-rendered; the rest are served on demand via ISR.
-  const zips = getAllZipGuides().slice(0, 500);
-  return zips.map((z) => ({ slug: z.slug }));
+  // 2026-05-04: source from build-keep-sets.ts → zip-keep.json so middleware
+  // (410 outside keep) and prerender are 1:1 and Bing-impressed slugs join
+  // automatically.
+  return (zipKeep as string[]).map((slug) => ({ slug }));
 }
 
 function zipLabel(z: { zip_code: string; city: string; state: string }): string {

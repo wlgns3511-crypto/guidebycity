@@ -41,6 +41,17 @@ import { getAllPosts } from '../lib/blog';
 import { getAllGuides } from '../lib/guides';
 import { RANKING_TYPES } from '../lib/rankings';
 import { HAZARD_TOPICS } from '../lib/hazard-topics';
+import {
+  CITY_VINTAGE,
+  STATE_VINTAGE,
+  RANKINGS_VINTAGE,
+  RISK_VINTAGE,
+  GUIDE_VINTAGE,
+  ABOUT_VINTAGE,
+  METHODOLOGY_VINTAGE,
+  SITE_VINTAGE,
+  LEGAL_VINTAGES,
+} from '../lib/authorship';
 
 const SITE_URL = 'https://guidebycity.com';
 const NOW = new Date().toISOString().split('T')[0];
@@ -65,26 +76,29 @@ const entries: Entry[] = [];
 function add(e: Entry) { if (!seen.has(e.url)) { seen.add(e.url); entries.push(e); } }
 
 // Static pages + /es/
-for (const [p, pr, cf] of [
-  ['/', '1.0', 'monthly'],
-  ['/es/', '0.7', 'monthly'],
-  ['/city/', '0.9', 'monthly'],
-  ['/compare/', '0.9', 'monthly'],
-  ['/what-is-walk-score/', '0.9', 'weekly'],
-  ['/about/', '0.3', 'yearly'],
-  ['/methodology/', '0.4', 'yearly'],
-  ['/contact/', '0.3', 'yearly'],
-  ['/privacy/', '0.2', 'yearly'],
-  ['/terms/', '0.2', 'yearly'],
-  ['/disclaimer/', '0.2', 'yearly'],
-  ['/search/', '0.5', 'monthly'],
-] as [string, string, string][]) {
-  add({ url: `${SITE_URL}${p}`, priority: pr, changefreq: cf });
+// 2026-05-05 — Phase 6.2 honest freshness: per-entity lastmod (vs single NOW).
+// Pages don't all change every day — Google reads same-NOW everywhere as a
+// machine-generated freshness lie. Source from lib/authorship vintages so the
+// AuthorBox UI date and the sitemap date match.
+for (const [p, pr, cf, lm] of [
+  ['/', '1.0', 'monthly', SITE_VINTAGE],
+  ['/city/', '0.9', 'monthly', CITY_VINTAGE],
+  ['/compare/', '0.9', 'monthly', SITE_VINTAGE],
+  ['/what-is-walk-score/', '0.9', 'weekly', GUIDE_VINTAGE],
+  ['/about/', '0.3', 'yearly', ABOUT_VINTAGE],
+  ['/methodology/', '0.4', 'yearly', METHODOLOGY_VINTAGE],
+  ['/contact/', '0.3', 'yearly', ABOUT_VINTAGE],
+  ['/privacy/', '0.2', 'yearly', LEGAL_VINTAGES.privacy],
+  ['/terms/', '0.2', 'yearly', LEGAL_VINTAGES.terms],
+  ['/disclaimer/', '0.2', 'yearly', LEGAL_VINTAGES.disclaimer],
+  ['/search/', '0.5', 'monthly', SITE_VINTAGE],
+] as [string, string, string, string][]) {
+  add({ url: `${SITE_URL}${p}`, priority: pr, changefreq: cf, lastmod: lm });
 }
 
 // States: real entities, 51 (50 + DC)
 for (const s of getAllStates()) {
-  add({ url: `${SITE_URL}/state/${s.toLowerCase()}/`, priority: '0.8', changefreq: 'monthly' });
+  add({ url: `${SITE_URL}/state/${s.toLowerCase()}/`, priority: '0.8', changefreq: 'monthly', lastmod: STATE_VINTAGE });
 }
 
 // 2026-04-29 HCU 5-chunk patch — /rankings/ + /risk/ topic clusters.
@@ -93,19 +107,19 @@ for (const s of getAllStates()) {
 // /risk/: 5 hazard topics (tornado, hurricane, wildfire, earthquake, flood)
 // drawing on FEMA NRI county-level data — guidebycity unique-data lever vs
 // costbycity which only has BEA RPP overlap.
-add({ url: `${SITE_URL}/rankings/`, priority: '0.85', changefreq: 'monthly' });
+add({ url: `${SITE_URL}/rankings/`, priority: '0.85', changefreq: 'monthly', lastmod: RANKINGS_VINTAGE });
 for (const t of RANKING_TYPES) {
-  add({ url: `${SITE_URL}/rankings/${t}/`, priority: '0.8', changefreq: 'monthly' });
+  add({ url: `${SITE_URL}/rankings/${t}/`, priority: '0.8', changefreq: 'monthly', lastmod: RANKINGS_VINTAGE });
 }
-add({ url: `${SITE_URL}/risk/`, priority: '0.85', changefreq: 'monthly' });
+add({ url: `${SITE_URL}/risk/`, priority: '0.85', changefreq: 'monthly', lastmod: RISK_VINTAGE });
 for (const h of HAZARD_TOPICS) {
-  add({ url: `${SITE_URL}/risk/${h}/`, priority: '0.8', changefreq: 'monthly' });
+  add({ url: `${SITE_URL}/risk/${h}/`, priority: '0.8', changefreq: 'monthly', lastmod: RISK_VINTAGE });
 }
 
 // Cities: real entity pages, earn GSC impressions (boise 47, burlington 33,
 // asheville 29). All 387 MSAs kept — this is IA not cardinality bloat.
 for (const c of getAllCities()) {
-  add({ url: `${SITE_URL}/city/${c.slug}/`, priority: '0.7', changefreq: 'monthly' });
+  add({ url: `${SITE_URL}/city/${c.slug}/`, priority: '0.7', changefreq: 'monthly', lastmod: CITY_VINTAGE });
 }
 
 // ─── /compare/ pairs DROPPED 2026-04-26 (AdSense scaled-content remediation) ──
@@ -126,15 +140,15 @@ for (const c of getAllCities()) {
 // ─── /es/city/ DROPPED 2026-04-22 — thin translation, no GSC signal ───────
 
 // Guides
-add({ url: `${SITE_URL}/guide/`, priority: '0.8', changefreq: 'weekly' });
+add({ url: `${SITE_URL}/guide/`, priority: '0.8', changefreq: 'weekly', lastmod: GUIDE_VINTAGE });
 for (const g of getAllGuides()) {
-  add({ url: `${SITE_URL}/guide/${g.slug}/`, lastmod: g.updatedAt || NOW, priority: '0.7', changefreq: 'monthly' });
+  add({ url: `${SITE_URL}/guide/${g.slug}/`, lastmod: g.updatedAt || GUIDE_VINTAGE, priority: '0.7', changefreq: 'monthly' });
 }
 
 // Blog
-add({ url: `${SITE_URL}/blog/`, priority: '0.8', changefreq: 'weekly' });
+add({ url: `${SITE_URL}/blog/`, priority: '0.8', changefreq: 'weekly', lastmod: GUIDE_VINTAGE });
 for (const p of getAllPosts()) {
-  add({ url: `${SITE_URL}/blog/${p.slug}/`, priority: '0.7', changefreq: 'monthly' });
+  add({ url: `${SITE_URL}/blog/${p.slug}/`, priority: '0.7', changefreq: 'monthly', lastmod: GUIDE_VINTAGE });
 }
 
 // ─── Cardinality guard ────────────────────────────────────────────────────

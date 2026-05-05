@@ -20,14 +20,53 @@
  */
 import * as fs from 'fs';
 import * as path from 'path';
-import { getAllZipGuides } from '../lib/db';
+import { getAllZipGuides, getZipGuideBySlug, getAllCities } from '../lib/db';
 import { STATIC_COMPARISON_SLUGS } from '../lib/compare-whitelist';
 
 const OUT_DIR = path.resolve(__dirname, '..', 'lib', 'generated');
 fs.mkdirSync(OUT_DIR, { recursive: true });
 
+// HCU 2026-05-04 — Bing impressions auto-union (separate index from Google).
+const BING_JSON_DIR = path.resolve(__dirname, '..', '..', '_shared', 'data', 'bing_analyze');
+const BING_DOMAIN = 'guidebycity.com';
+const BING_MIN_IMP = 1;
+
+function loadBingSlugs(routeRe: RegExp): string[] {
+  if (!fs.existsSync(BING_JSON_DIR)) return [];
+  const files = fs.readdirSync(BING_JSON_DIR)
+    .filter((f) => /^\d{4}-\d{2}-\d{2}\.json$/.test(f))
+    .sort();
+  if (!files.length) return [];
+  try {
+    const json = JSON.parse(fs.readFileSync(path.join(BING_JSON_DIR, files[files.length - 1]), 'utf8'));
+    const site = json[BING_DOMAIN];
+    if (!site || !Array.isArray(site.pages)) return [];
+    const out = new Map<string, number>();
+    for (const pg of site.pages) {
+      const url = String(pg.url || '');
+      const pathOnly = url.replace(/^https?:\/\/[^/]+/, '');
+      const m = routeRe.exec(pathOnly);
+      if (!m) continue;
+      const slug = decodeURIComponent(m[1]);
+      const imp = Number(pg.impressions) || 0;
+      out.set(slug, (out.get(slug) || 0) + imp);
+    }
+    return [...out.entries()].filter(([, i]) => i >= BING_MIN_IMP).map(([s]) => s);
+  } catch {
+    return [];
+  }
+}
+
 // /zip/ — matches slice(0, 500) in app/zip/[slug]/page.tsx generateStaticParams
-const zipSlugs = getAllZipGuides().slice(0, 500).map((z) => z.slug);
+const zipSet = new Set<string>(getAllZipGuides().slice(0, 500).map((z) => z.slug));
+const baseZipCount = zipSet.size;
+const bingZips = loadBingSlugs(/^\/zip\/([^/]+)\/?$/);
+let zipBingAdded = 0;
+for (const slug of bingZips) {
+  if (zipSet.has(slug)) continue;
+  if (getZipGuideBySlug(slug)) { zipSet.add(slug); zipBingAdded++; }
+}
+const zipSlugs = Array.from(zipSet).sort();
 fs.writeFileSync(
   path.join(OUT_DIR, 'zip-keep.json'),
   JSON.stringify(zipSlugs),
@@ -39,6 +78,23 @@ fs.writeFileSync(
   JSON.stringify(STATIC_COMPARISON_SLUGS),
 );
 
+// 2026-05-05 — Phase 6.1: short-slug whitelist for /city/ middleware redirect.
+// City canonical slugs are verbose ("seattle-tacoma-bellevue-wa"). Short queries
+// — both dashless ("seattle") and dashed ("san-francisco", "new-york",
+// "los-angeles") — 100% 404 today. Middleware redirects ≤20-char slugs to
+// /search/?q=<slug> unless the slug is itself a real MSA. ~268 real ≤20-char
+// city slugs (ames-ia / bend-or / akron-oh ...) — this whitelist captures all
+// of them so static pages keep serving.
+const SHORT_LEN = 20;
+const validCityShorts = getAllCities()
+  .map((c) => c.slug)
+  .filter((s) => s.length <= SHORT_LEN)
+  .sort();
+fs.writeFileSync(
+  path.join(OUT_DIR, 'city-shorts.json'),
+  JSON.stringify(validCityShorts),
+);
+
 console.log(
-  `✓ keep-sets: zip=${zipSlugs.length} compare=${STATIC_COMPARISON_SLUGS.length}`,
+  `✓ keep-sets: zip=${zipSlugs.length} (${baseZipCount} base + ${zipBingAdded} Bing) compare=${STATIC_COMPARISON_SLUGS.length} city-shorts=${validCityShorts.length}`,
 );

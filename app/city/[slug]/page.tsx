@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getCityBySlug, getAllCities, getCitiesByState, getWeather, monthName } from "@/lib/db";
 import { buildDbPageRobots, buildTrustUpdatedLabel, getDbPageGate, getReviewedAt, getReviewedBy, METHODOLOGY_URL } from "@/lib/db-page";
+import { CITY_VINTAGE, PUBLISHER, SOURCE_AUTHORITIES } from "@/lib/authorship";
 import { isValidComparePair } from "@/lib/compare-whitelist";
 import { breadcrumbSchema, faqSchema } from "@/lib/schema";
 import { analyzeCity } from "@/lib/city-analysis";
@@ -465,7 +466,7 @@ export default async function CityPage({ params }: Props) {
         ]}
       />
 
-      <AuthorBox />
+      <AuthorBox vintage={CITY_VINTAGE} />
 
           <EmbedButton url="https://guidebycity.com" title="Data from GuideByCity" site="GuideByCity" siteUrl="https://guidebycity.com" />
 
@@ -486,8 +487,20 @@ export default async function CityPage({ params }: Props) {
 
       <CrossSiteLinks current="GuideByCity" />
 
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({ ...breadcrumbSchema(breadcrumbs), author: { "@type": "Organization", name: "DataPeek" } }) }} />
-      {faqs.length > 0 && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({ ...faqSchema(faqs), author: { "@type": "Organization", name: "DataPeek" } }) }} />}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "Place",
+        name: `${c.short_name}, ${c.state}`,
+        url: `https://guidebycity.com/city/${slug}/`,
+        description: topAnswer,
+        address: { "@type": "PostalAddress", addressLocality: c.short_name, addressRegion: c.state, addressCountry: "US" },
+        dateModified: CITY_VINTAGE,
+        author: { "@type": "Organization", name: PUBLISHER.name, url: PUBLISHER.url },
+        publisher: { "@type": "Organization", name: PUBLISHER.name, url: PUBLISHER.url },
+        reviewedBy: SOURCE_AUTHORITIES,
+      }) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({ ...breadcrumbSchema(breadcrumbs), author: { "@type": "Organization", name: PUBLISHER.name } }) }} />
+      {faqs.length > 0 && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({ ...faqSchema(faqs), author: { "@type": "Organization", name: PUBLISHER.name } }) }} />}
     </div>
   );
 }
