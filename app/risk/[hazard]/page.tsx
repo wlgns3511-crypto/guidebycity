@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getHazardProfile, getHazardRows, HAZARD_TOPICS, type HazardTopic } from "@/lib/hazard-topics";
-import { itemListSchema, datasetSchema } from "@/lib/schema";
+import { itemListSchema, datasetSchema, FEMA_NRI_CREATOR } from "@/lib/schema";
 
 interface Props { params: Promise<{ hazard: string }> }
 
@@ -50,7 +50,7 @@ export default async function HazardTopicPage({ params }: Props) {
   return (
     <div>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema(profile.title, `/risk/${hazard}/`, listItems)) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(datasetSchema(profile.title, profile.metaDescription, `/risk/${hazard}/`)) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(datasetSchema(profile.title, profile.metaDescription, `/risk/${hazard}/`, FEMA_NRI_CREATOR)) }} />
 
       <nav className="text-sm text-slate-500 mb-4">
         <a href="/" className="hover:underline">Home</a>{' / '}

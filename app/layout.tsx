@@ -8,7 +8,6 @@ const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://guidebycity.com";
 
 const ROOT_ALTERNATE_LANGUAGES = {
   en: `${SITE_URL}/`,
-  es: `${SITE_URL}/es/`,
   'x-default': `${SITE_URL}/`,
 } as const;
 

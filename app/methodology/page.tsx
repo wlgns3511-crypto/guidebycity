@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { AuthorBox } from "@/components/AuthorBox";
+import { HAZARD_TIER_THRESHOLDS } from "@/lib/hazard-tier";
 
 export const metadata: Metadata = {
   title: "Our Methodology — How GuideByCity Builds Its City Data",
@@ -187,11 +189,49 @@ export default function MethodologyPage() {
         </li>
       </ul>
 
+      <h2 id="hazard-tier">HazardTier — our 5-band FEMA NRI rollup</h2>
+      <p>
+        HazardTier is the single non-trivial editorial derivation we
+        publish. It is a 5-band rollup of FEMA National Risk Index v2024
+        that combines two NRI signals the agency publishes separately:
+        the metro&apos;s primary-county <strong>overall</strong> rating, and
+        the per-hazard rating on the metro&apos;s <strong>top-3 hazards</strong>.
+        A metro with a moderate composite but one extreme hazard
+        (Taylor County, TX = &ldquo;Relatively Moderate&rdquo; overall but
+        &ldquo;Very High&rdquo; hail) gets surfaced explicitly rather than
+        buried under the composite.
+      </p>
+      <p>
+        The exact thresholds, applied in order:
+      </p>
+      <ul>
+        {HAZARD_TIER_THRESHOLDS.map(t => (
+          <li key={t.tier}><strong>{t.tier}:</strong> {t.rule}</li>
+        ))}
+      </ul>
+      <p>
+        HazardTier is <em>not</em> a FEMA-issued rating and is not
+        endorsed by FEMA, NOAA, USGS, or the U.S. Department of Housing
+        and Urban Development. The classifier is deterministic — given
+        the same FEMA NRI release, the same input always produces the
+        same tier. We refresh HazardTier within 60 days of each new NRI
+        version (currently v2024). For parcel-level decisions, defer to
+        the FEMA Flood Map Service Center, USGS National Seismic Hazard
+        Maps, and equivalent source-of-truth products; HazardTier is a
+        metro-level screening signal only.
+      </p>
+
       <h2>Corrections and feedback</h2>
       <p>
-        If a published Census, BEA, BLS, or NOAA figure disagrees with
-        what you see here, please <a href="/contact">contact us</a>{" "}
-        with the source URL.
+        If a published Census, BEA, BLS, NOAA, HUD, or FEMA figure
+        disagrees with what you see here, follow the procedure on our
+        <a href="/corrections-policy/"> corrections policy</a> page —
+        we acknowledge correction requests within 5 business days. The
+        underlying agencies (U.S. Census Bureau, U.S. Bureau of
+        Economic Analysis, U.S. Bureau of Labor Statistics, NOAA, U.S.
+        Department of Housing and Urban Development, FEMA) maintain
+        their own data-quality reporting channels for issues with the
+        source data itself.
       </p>
 
       <p className="text-sm text-slate-500 border-t pt-4 mt-8">
@@ -199,6 +239,8 @@ export default function MethodologyPage() {
         changes to how we source or compute the data will be reflected
         here before they reach production pages.
       </p>
+
+      <AuthorBox source="Census ACS · BEA RPP · BLS CPI · NOAA NCEI · HUD FMR · FEMA NRI v2024 (HazardTier rollup)" />
     </article>
   );
 }

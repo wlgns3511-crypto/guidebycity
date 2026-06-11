@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 import { HAZARD_TOPICS, getHazardProfile } from "@/lib/hazard-topics";
+import { HAZARD_TIER_THRESHOLDS } from "@/lib/hazard-tier";
+import { datasetSchema, FEMA_NRI_CREATOR } from "@/lib/schema";
+import { AuthorBox } from "@/components/AuthorBox";
 
 export const metadata: Metadata = {
   title: "US City Hazard Risk — Tornado, Hurricane, Wildfire, Earthquake, Flood",
@@ -44,6 +47,102 @@ export default function RiskIndex() {
         <a href="/city/" className="text-teal-600 hover:underline">city guide</a>.
       </p>
 
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(
+            datasetSchema(
+              'US Metro HazardTier — guidebycity 5-band rollup of FEMA NRI v2024',
+              'A 5-band classification (Low → Extreme) of US metros derived from FEMA NRI v2024 primary-county overall rating plus the count of "Very High"-rated hazards in each metro\'s top-3 hazard set. Covers 387 metros with primary-county matches.',
+              '/risk/',
+              FEMA_NRI_CREATOR,
+            ),
+          ),
+        }}
+      />
+
+      <section
+        data-upgrade="hazard-tier-explainer"
+        aria-label="What our HazardTier 5-band means"
+        className="mb-10 rounded-xl border border-slate-200 bg-white p-5"
+      >
+        <h2 className="text-xl font-bold text-slate-900 mb-3">What our HazardTier 5-band means</h2>
+        <p className="text-sm text-slate-700 leading-relaxed mb-3">
+          HazardTier is guidebycity&apos;s 5-band rollup of FEMA NRI v2024. It reconciles two signals the raw NRI publishes separately: the metro&apos;s composite primary-county overall rating, and the per-hazard rating on the metro&apos;s top-3 hazards. A metro with a moderate composite but one extreme single hazard (Taylor County, TX = overall &ldquo;Relatively Moderate&rdquo; but &ldquo;Very High&rdquo; for hail) gets surfaced explicitly rather than buried under the composite.
+        </p>
+        <ul className="text-sm text-slate-700 space-y-2 list-none pl-0">
+          {HAZARD_TIER_THRESHOLDS.map(t => (
+            <li key={t.tier} className="flex gap-2">
+              <span className="inline-block min-w-[90px] font-semibold text-slate-900">{t.tier}</span>
+              <span className="text-slate-600">{t.rule}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section
+        data-upgrade="hazard-tier-misreadings"
+        aria-label="How tier ≠ insurance premium"
+        className="mb-10 rounded-xl border border-slate-200 bg-white p-5"
+      >
+        <h2 className="text-xl font-bold text-slate-900 mb-3">How HazardTier ≠ insurance premium</h2>
+        <p className="text-sm text-slate-700 leading-relaxed mb-3">
+          HazardTier measures <strong>physical hazard frequency and intensity</strong>, not your homeowner-insurance bill. The relationship is partial. A metro can sit at Moderate HazardTier and still see insurance premium spikes because of carrier withdrawal (California wildfire zones), reinsurance cost pass-throughs (Florida hurricane), or building-stock vulnerability (Mississippi mobile-home density). Conversely, an Elevated metro with a single dominant hazard the carriers price routinely (Tornado Alley) often carries lower premiums than the tier suggests.
+        </p>
+        <p className="text-sm text-slate-700 leading-relaxed">
+          Use HazardTier as a physical-exposure baseline. To estimate insurance cost: combine the tier with state-level homeowner-premium averages from the NAIC dwelling-fire/HO-3 reports, and check current carrier availability in the specific ZIP via the state Department of Insurance.
+        </p>
+      </section>
+
+      <section
+        data-upgrade="hazard-tier-dominant"
+        aria-label="Dominant hazard ≠ only hazard"
+        className="mb-10 rounded-xl border border-slate-200 bg-white p-5"
+      >
+        <h2 className="text-xl font-bold text-slate-900 mb-3">Dominant hazard is not the only hazard</h2>
+        <p className="text-sm text-slate-700 leading-relaxed mb-3">
+          When the city page says &ldquo;dominant hazard = hurricane,&rdquo; that&apos;s the single highest-scored hazard in the FEMA top-3 set. It does not mean other hazards are absent. Florida metros routinely combine hurricane + flood + lightning at meaningful levels; Pacific Northwest metros combine wildfire + earthquake; Gulf Coast metros combine hurricane + coastal flood + tornado.
+        </p>
+        <p className="text-sm text-slate-700 leading-relaxed">
+          On the per-city page, the &ldquo;Top hazards by FEMA score&rdquo; grid below the HazardTier card shows the full top-3. Use that for relocation planning rather than the single &ldquo;dominant&rdquo; label, especially in multi-hazard regions.
+        </p>
+      </section>
+
+      <section
+        data-upgrade="hazard-tier-window"
+        aria-label="Why we use the FEMA NRI v2024 window"
+        className="mb-10 rounded-xl border border-slate-200 bg-white p-5"
+      >
+        <h2 className="text-xl font-bold text-slate-900 mb-3">Why FEMA NRI v2024 and not a 10-year NOAA event count</h2>
+        <p className="text-sm text-slate-700 leading-relaxed mb-3">
+          FEMA NRI v2024 already integrates the multi-decade historical record (NOAA Storm Events DB for severe storms, USGS National Seismic Hazard maps for earthquake, NIFC fire-occurrence for wildfire, NFIP claims for riverine flood) and combines it with exposure data (population, building value, agricultural value) to produce a single risk-score that&apos;s comparable across very different hazard types.
+        </p>
+        <p className="text-sm text-slate-700 leading-relaxed">
+          A raw 10-year NOAA event count would be more current but would over-index recent volatility and would not be hazard-normalised — a wildfire metro with two extreme fires in 10 years and a tornado metro with twenty EF-0/EF-1 events would look the same on a count-only basis. FEMA&apos;s composite handles that. We refresh against new NRI releases (typically annual) rather than re-running per-event counts.
+        </p>
+      </section>
+
+      <section
+        data-upgrade="hazard-tier-use"
+        aria-label="How to use HazardTier alongside FEMA flood maps and USGS seismic data"
+        className="mb-10 rounded-xl border border-slate-200 bg-white p-5"
+      >
+        <h2 className="text-xl font-bold text-slate-900 mb-3">How to use HazardTier alongside the underlying sources</h2>
+        <p className="text-sm text-slate-700 leading-relaxed mb-3">
+          HazardTier is a metro-level screening signal. Once you&apos;ve narrowed to a specific metro or neighborhood, drop down to the source-of-truth maps and datasets for diligence:
+        </p>
+        <ul className="text-sm text-slate-700 space-y-1.5 list-disc pl-5">
+          <li><strong>Flood exposure:</strong> FEMA Flood Map Service Center for the exact parcel&apos;s SFHA designation (AE vs X zone) — much more decision-relevant than the metro composite for any individual house.</li>
+          <li><strong>Wildfire exposure:</strong> CAL FIRE FHSZ maps in California, USFS WUI maps elsewhere — they show the property-level burn likelihood at a resolution the metro tier cannot.</li>
+          <li><strong>Earthquake exposure:</strong> USGS National Seismic Hazard Maps + the local building-code vintage (post-1990s code drastically reduces real risk).</li>
+          <li><strong>Hurricane / coastal flood:</strong> NOAA SLOSH inundation maps and the local Building Code Effectiveness Grading Schedule.</li>
+        </ul>
+        <p className="text-sm text-slate-500 mt-3">
+          HazardTier replaces &ldquo;is this metro risky?&rdquo; with a coherent 5-band answer; the source maps above replace &ldquo;is this parcel risky?&rdquo;
+        </p>
+      </section>
+
+      <h2 className="text-xl font-bold text-slate-900 mb-3">Per-hazard topic pages — top-25 metros</h2>
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mb-10">
         {HAZARD_TOPICS.map((h) => {
           const p = getHazardProfile(h)!;
@@ -72,6 +171,8 @@ export default function RiskIndex() {
         {' · '}
         <a href="/state/" className="text-teal-600 hover:underline">State directory →</a>
       </div>
+
+      <AuthorBox source="FEMA National Risk Index v2024 (primary-county mapping) · 387 US metros · HazardTier rollup derived deterministically from NRI overall + per-hazard ratings." />
     </div>
   );
 }

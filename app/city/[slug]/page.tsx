@@ -4,7 +4,7 @@ import { getCityBySlug, getAllCities, getCitiesByState, getWeather, monthName } 
 import { buildDbPageRobots, buildTrustUpdatedLabel, getDbPageGate, getReviewedAt, getReviewedBy, METHODOLOGY_URL } from "@/lib/db-page";
 import { CITY_VINTAGE, PUBLISHER, SOURCE_AUTHORITIES } from "@/lib/authorship";
 import { isValidComparePair } from "@/lib/compare-whitelist";
-import { breadcrumbSchema, faqSchema } from "@/lib/schema";
+import { breadcrumbSchema, faqSchema, datasetSchema } from "@/lib/schema";
 import { analyzeCity } from "@/lib/city-analysis";
 import { generateAutoFAQs } from "@/lib/auto-faqs";
 import { AdSlot } from "@/components/AdSlot";
@@ -28,6 +28,7 @@ import { DecisionNext } from "@/components/upgrades/DecisionNext";
 import { RelatedEntities } from '@/components/upgrades/RelatedEntities';
 import { TableOfContents } from '@/components/upgrades/TableOfContents';
 import { getRiskByCbsa, buildRiskCommentary, hazardLabel, hazardTitle, type RiskStatus } from '@/lib/risk-facts';
+import { classifyHazardTier, hazardTierBlurb, dominantHazardLabel, type HazardTier } from '@/lib/hazard-tier';
 
 interface Props { params: Promise<{ slug: string }> }
 
@@ -121,6 +122,7 @@ export default async function CityPage({ params }: Props) {
   const dataVintage = "local ACS + BEA RPP + NOAA climate snapshot";
   const risk = getRiskByCbsa(c.fips);
   const riskCommentary = risk ? buildRiskCommentary(slug, risk, c.short_name) : null;
+  const hazardTier = classifyHazardTier(risk);
   const topAnswer = buildCityTopAnswer(c);
   const autoFaqs = generateAutoFAQs(c, weather);
   const faqs = [
@@ -271,6 +273,37 @@ export default async function CityPage({ params }: Props) {
           </div>
         </section>
       )}
+
+      {risk && hazardTier.confidence !== 'low' && (() => {
+        const tierTone: Record<HazardTier, { ring: string; bg: string; pill: string; label: string }> = {
+          'Low':      { ring: 'ring-emerald-200', bg: 'bg-emerald-50',  pill: 'bg-emerald-100 text-emerald-900', label: 'text-emerald-900' },
+          'Moderate': { ring: 'ring-amber-200',   bg: 'bg-amber-50',    pill: 'bg-amber-100 text-amber-900',     label: 'text-amber-900' },
+          'Elevated': { ring: 'ring-orange-200',  bg: 'bg-orange-50',   pill: 'bg-orange-100 text-orange-900',   label: 'text-orange-900' },
+          'High':     { ring: 'ring-rose-200',    bg: 'bg-rose-50',     pill: 'bg-rose-100 text-rose-900',       label: 'text-rose-900' },
+          'Extreme':  { ring: 'ring-red-300',     bg: 'bg-red-50',      pill: 'bg-red-200 text-red-900',         label: 'text-red-900' },
+        };
+        const tt = tierTone[hazardTier.tier];
+        return (
+          <section
+            data-upgrade="hazard-tier"
+            aria-label={`HazardTier classification for ${c.short_name}`}
+            className={`mb-6 rounded-xl ring-1 ${tt.ring} ${tt.bg} p-5`}
+          >
+            <div className="flex flex-wrap items-center gap-2 mb-2">
+              <span className={`inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${tt.pill}`}>HazardTier · {hazardTier.tier}</span>
+              <span className="text-xs text-slate-500">Dominant: {dominantHazardLabel(hazardTier.dominantHazard)}</span>
+              {hazardTier.annualEvents != null && hazardTier.annualEvents > 0 && (
+                <span className="text-xs text-slate-500">· {hazardTier.annualEvents.toFixed(2)} modelled events/yr across top hazards</span>
+              )}
+            </div>
+            <p className={`text-sm leading-relaxed ${tt.label}`}>
+              <strong>{c.short_name}</strong> classifies as a <strong>{hazardTier.tier}</strong> HazardTier metro — {hazardTierBlurb(hazardTier.tier)}.
+              {hazardTier.veryHighHazardCount > 0 && ` ${hazardTier.veryHighHazardCount} of its top-3 county hazards carry FEMA's "Very High" rating.`}
+            </p>
+            <p className="text-xs text-slate-500 mt-2">{hazardTier.evidence} HazardTier is a guidebycity-derived 5-band rollup of FEMA NRI — see <a href="/methodology/#hazard-tier" className="underline">methodology</a> for thresholds.</p>
+          </section>
+        );
+      })()}
 
       {/* ─── Risk Profile (FEMA NRI) ──────────────────────────────────
           2026-04-29 HCU 5-chunk patch — guidebycity unique-data section.
@@ -501,6 +534,11 @@ export default async function CityPage({ params }: Props) {
       }) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({ ...breadcrumbSchema(breadcrumbs), author: { "@type": "Organization", name: PUBLISHER.name } }) }} />
       {faqs.length > 0 && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({ ...faqSchema(faqs), author: { "@type": "Organization", name: PUBLISHER.name } }) }} />}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(datasetSchema(
+        `${c.short_name} — Cost-of-Living & Hazard-Risk Profile`,
+        `City-level dataset for ${c.short_name}: cost-of-living index from BEA Regional Price Parities, median household income / home value / rent from Census ACS, FEMA NRI primary-county hazard rating, and our HazardTier 5-band rollup.`,
+        `/city/${slug}/`,
+      )) }} />
     </div>
   );
 }

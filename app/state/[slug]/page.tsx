@@ -6,9 +6,10 @@ import { InsightBlock } from "@/components/upgrades/InsightBlock";
 import { getStateInsights } from "@/lib/state-insights";
 import { StateRich } from '@/components/state/StateRich';
 import { getStateRiskAggregate, hazardLabel, hazardTitle } from "@/lib/risk-facts";
+import { rollupStateHazardTier, dominantHazardLabel, hazardTierBlurb, type HazardTier } from "@/lib/hazard-tier";
 import { AuthorBox } from "@/components/AuthorBox";
 import { STATE_VINTAGE, PUBLISHER, SOURCE_AUTHORITIES } from "@/lib/authorship";
-import { breadcrumbSchema } from "@/lib/schema";
+import { breadcrumbSchema, datasetSchema } from "@/lib/schema";
 
 interface Props { params: Promise<{ slug: string }> }
 export const dynamicParams = false;
@@ -66,8 +67,10 @@ export default async function StatePage({ params }: Props) {
   const aboveAvg = withCost.filter(c => (c.cost_index ?? 0) > nationalAvgCost).length;
   const belowAvg = withCost.filter(c => (c.cost_index ?? 0) < nationalAvgCost).length;
 
-  // Risk aggregate
+  // Risk aggregate (FEMA NRI raw band distribution)
   const riskAgg = getStateRiskAggregate(state);
+  // HazardTier rollup (guidebycity 5-band derived from FEMA NRI + Very-High hazard count)
+  const tierRollup = rollupStateHazardTier(state, cities);
   const dominantBand = (() => {
     const bands = [
       { label: 'Very High', n: riskAgg.veryHigh },
@@ -157,6 +160,53 @@ export default async function StatePage({ params }: Props) {
         </p>
       </section>
 
+      {tierRollup.cities > 0 && (() => {
+        const tierPill: Record<HazardTier, string> = {
+          Low: 'bg-emerald-100 text-emerald-900',
+          Moderate: 'bg-amber-100 text-amber-900',
+          Elevated: 'bg-orange-100 text-orange-900',
+          High: 'bg-rose-100 text-rose-900',
+          Extreme: 'bg-red-200 text-red-900',
+        };
+        const order: HazardTier[] = ['Low', 'Moderate', 'Elevated', 'High', 'Extreme'];
+        const extremePlusHigh = tierRollup.distribution.Extreme + tierRollup.distribution.High;
+        return (
+          <section
+            data-upgrade="state-hazard-tier"
+            aria-label={`HazardTier distribution across ${full}`}
+            className="mb-8 rounded-xl border border-slate-200 bg-white"
+          >
+            <header className="border-b border-slate-100 px-5 py-4 flex flex-wrap items-center justify-between gap-2">
+              <h2 className="text-lg font-bold text-slate-900">HazardTier Distribution · {full}</h2>
+              <span className="text-xs uppercase tracking-wide text-slate-500">Modal tier: {tierRollup.modalTier}</span>
+            </header>
+            <div className="px-5 py-4">
+              <div className="grid grid-cols-5 gap-2 mb-3">
+                {order.map((t) => (
+                  <div key={t} className={`rounded-lg p-3 text-center ${tierPill[t]}`}>
+                    <div className="text-[10px] uppercase tracking-wider font-semibold opacity-70">{t}</div>
+                    <div className="text-xl font-bold mt-1">{tierRollup.distribution[t]}</div>
+                  </div>
+                ))}
+              </div>
+              <p className="text-sm text-slate-700 leading-relaxed">
+                Of {full}&apos;s {tierRollup.cities} metros with FEMA NRI primary-county matches,{' '}
+                <strong>{extremePlusHigh} fall in High or Extreme HazardTier</strong>{' '}
+                ({tierRollup.distribution.Elevated} Elevated, {tierRollup.distribution.Moderate} Moderate, {tierRollup.distribution.Low} Low).{' '}
+                {tierRollup.veryHighHazardCities > 0 && (
+                  <>{tierRollup.veryHighHazardCities} metros carry at least one FEMA &ldquo;Very High&rdquo;-rated hazard in their top-3.{' '}</>
+                )}
+                The state-level dominant hazard across HazardTier-classifiable metros is <strong>{dominantHazardLabel(tierRollup.dominantHazardOverState)}</strong>.
+              </p>
+              <p className="text-xs text-slate-500 mt-3">
+                HazardTier is a guidebycity-derived 5-band rollup of FEMA NRI v2024 — see <a href="/methodology/#hazard-tier" className="underline">methodology</a> for thresholds.
+                Cross-reference with the per-city risk profile below.
+              </p>
+            </div>
+          </section>
+        );
+      })()}
+
       <InsightBlock
         entityName={full}
         insights={getStateInsights(full, cities, nationalAvgIncome, nationalAvgCost)}
@@ -234,6 +284,11 @@ export default async function StatePage({ params }: Props) {
         { name: "Home", url: "/" },
         { name: full, url: `/state/${slug}/` },
       ])) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(datasetSchema(
+        `${full} — State Cost-of-Living & Hazard-Risk Aggregate`,
+        `State-level aggregate for ${full} covering ${cities.length} metros: cost-of-living and median income drawn from BEA Regional Price Parities and Census ACS, plus our HazardTier 5-band rollup of FEMA NRI v2024 across the state's metros.`,
+        `/state/${slug}/`,
+      )) }} />
     </div>
   );
 }

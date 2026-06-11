@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { AuthorBox } from "@/components/AuthorBox";
 
 export const metadata: Metadata = {
   title: "About GuideByCity",
@@ -34,10 +35,23 @@ export default function AboutPage() {
         regularly as new releases become available to ensure accuracy.
       </p>
 
+      <h2 className="text-xl font-semibold mt-8 mb-3">Editorial Posture</h2>
+      <p>
+        GuideByCity does not author the underlying figures we display. The U.S. Census Bureau, U.S. Bureau of
+        Economic Analysis, U.S. Bureau of Labor Statistics, NOAA National Centers for Environmental Information,
+        and U.S. Department of Housing and Urban Development are the data creators; our editorial team reviews the
+        path from source to surface. The only non-trivial editorial derivation we publish is HazardTier, a 5-band
+        rollup of FEMA NRI v2024. See our <a href="/editorial-policy/" className="text-teal-600 hover:underline">editorial policy</a> for
+        the source-vs-review separation, and our <a href="/corrections-policy/" className="text-teal-600 hover:underline">corrections policy</a> for
+        how to flag mismatches.
+      </p>
+
       <h2 className="text-xl font-semibold mt-8 mb-3">Contact Us</h2>
       <p>
         Have questions or feedback? Visit our <a href="/contact" className="text-teal-600 hover:underline">Contact page</a> to get in touch.
       </p>
+
+      <AuthorBox source="Census ACS · BEA RPP · BLS CPI · NOAA NCEI · HUD FMR · FEMA NRI v2024" />
     </article>
   );
 }
