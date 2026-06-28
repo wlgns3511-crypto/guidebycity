@@ -2,21 +2,9 @@ import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import zipKeepList from './lib/generated/zip-keep.json';
 import compareKeepList from './lib/generated/compare-keep.json';
-import cityShortsList from './lib/generated/city-shorts.json';
 
-// Prebuilt O(1) lookup sets — dumped at build time by scripts/build-keep-sets.ts
-// so Edge Runtime middleware never touches SQLite.
 const ZIP_KEEP_SET: Set<string> = new Set(zipKeepList as string[]);
 const COMPARE_KEEP_SET: Set<string> = new Set(compareKeepList as string[]);
-
-// 2026-05-05 — Phase 6.1 short-slug whitelist (every real MSA slug ≤20 chars
-// like ames-ia / bend-or / akron-oh / napa-ca …, ~268 entries). Anything
-// else hitting /city/<≤20-char>/ is a search-style query (seattle, chicago,
-// san-francisco, new-york, los-angeles, las-vegas) that 100% 404s today.
-// Middleware redirects them to /search/ for recovery; long canonical MSA
-// slugs (>20 chars like seattle-tacoma-bellevue-wa) are unaffected.
-const VALID_CITY_SHORTS: Set<string> = new Set(cityShortsList as string[]);
-const CITY_SHORT_LEN = 20;
 
 // 2026-05-05 — Phase 6 state full-name redirect. /state/<slug>/ is keyed
 // by 2-letter abbr ("wa") but users type "washington". Static 50-state +
@@ -84,24 +72,6 @@ export function middleware(request: NextRequest) {
       if (canonical === null) {
         return new NextResponse('Gone', { status: 410 });
       }
-    }
-  }
-
-  // Phase 6.1 — short city slug recovery. seattle / chicago / san-francisco /
-  // new-york / las-vegas etc → /search/?q=<slug>. Whitelist protects the 268
-  // real ≤20-char MSA slugs (ames-ia, bend-or, akron-oh ...).
-  if (pathname.startsWith('/city/')) {
-    const slug = pathname.slice(6).replace(/\/$/, '');
-    if (
-      slug &&
-      !slug.includes('/') &&
-      slug.length <= CITY_SHORT_LEN &&
-      !VALID_CITY_SHORTS.has(slug)
-    ) {
-      const url = request.nextUrl.clone();
-      url.pathname = '/search/';
-      url.search = `?q=${encodeURIComponent(slug)}`;
-      return NextResponse.redirect(url, 301);
     }
   }
 

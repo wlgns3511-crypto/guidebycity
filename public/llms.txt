@@ -1,0 +1,30 @@
+# GuideByCity
+
+> City Guides, Cost of Living & Demographics
+
+Explore 380+ US cities. Cost of living, income, housing, and city-to-city comparisons.
+
+## Core pages
+- [Methodology and data sources](https://guidebycity.com/methodology/): how every figure is derived, with primary-source citations
+- [City directory](https://guidebycity.com/city/): browse every city we cover
+- [Rankings](https://guidebycity.com/rankings/): city ranked by the key metric
+- [Compare](https://guidebycity.com/compare/): side-by-side comparison
+- [About and editorial standards](https://guidebycity.com/about/): authorship and review policy
+
+## Key city
+- [Ak](https://guidebycity.com/state/ak/)
+- [Al](https://guidebycity.com/state/al/)
+- [Ar](https://guidebycity.com/state/ar/)
+- [Az](https://guidebycity.com/state/az/)
+- [Ca](https://guidebycity.com/state/ca/)
+- [Co](https://guidebycity.com/state/co/)
+- [Ct](https://guidebycity.com/state/ct/)
+- [Dc](https://guidebycity.com/state/dc/)
+- [De](https://guidebycity.com/state/de/)
+- [Fl](https://guidebycity.com/state/fl/)
+- [Ga](https://guidebycity.com/state/ga/)
+- [Hi](https://guidebycity.com/state/hi/)
+
+## Data
+- Primary sources: U.S. Census Bureau, U.S. Bureau of Economic Analysis, U.S. Bureau of Labor Statistics, NOAA National Centers for Environmental Information
+- All figures are derived from these primary sources; see /methodology/ for derivation and vintage.

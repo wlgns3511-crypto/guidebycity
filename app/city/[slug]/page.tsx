@@ -29,6 +29,16 @@ import { RelatedEntities } from '@/components/upgrades/RelatedEntities';
 import { TableOfContents } from '@/components/upgrades/TableOfContents';
 import { getRiskByCbsa, buildRiskCommentary, hazardLabel, hazardTitle, type RiskStatus } from '@/lib/risk-facts';
 import { classifyHazardTier, hazardTierBlurb, dominantHazardLabel, type HazardTier } from '@/lib/hazard-tier';
+import { classifyAffordability } from '@/lib/city-affordability-tier';
+import { classifyCityGrowth } from '@/lib/population-growth-band';
+import { interpretCity } from '@/lib/city-interpretation';
+import { decodeCityCrosswalkFromCity, buildCityP1Title, buildCityVerdictChip } from '@/lib/crosswalk-guide';
+import { CrosswalkBridge } from '@/components/upgrades/CrosswalkBridge';
+import { CityInterpretationStrip } from '@/components/upgrades/CityInterpretation';
+import { CityHeroImage } from '@/components/CityHeroImage';
+import { getCityImage } from '@/lib/city-images';
+import { calculateProprietaryMetrics } from "@/lib/proprietary-metrics";
+import { ProprietaryMetricsBlock } from "@/components/upgrades/ProprietaryMetricsBlock";
 
 interface Props { params: Promise<{ slug: string }> }
 
@@ -74,36 +84,28 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return d > 0.03 && d < 0.8;
   }) || stateCities.find((p) => p.cost_index) || stateCities[0];
 
-  // Title retune 2026-04-24: GSC showed 632 queries, 0 clicks — dominant
-  // pattern is "cost of living in [city]" but old title led with "City Guide".
-  // Lead with the query, keep peer/rent context compact in the tail.
+  // Title retune 2026-05-20 (Phase 7 P1 verdict-in-title):
+  // Pattern `{ShortName}: {Verdict} · COL {n}` keeps the cost-of-living query
+  // intent (Demographia affordability band reads as the verdict) while binding
+  // a typed-id surface that varies across the 387-metro cohort. title.absolute
+  // bypasses the layout " | GuideByCity" suffix to stay under the 60c cap.
   const year = new Date().getUTCFullYear();
-  let title: string;
-  let description: string;
-  if (c.cost_index && c.median_rent) {
-    title = `Cost of Living in ${c.short_name} (${year}): COL ${fmtIdx(c.cost_index)}, Rent ${fmt(c.median_rent)}`;
-    description = buildCityTopAnswer(c);
-  } else if (c.cost_index && c.median_income) {
-    title = `Cost of Living in ${c.short_name} (${year}): COL ${fmtIdx(c.cost_index)}, Income ${fmt(c.median_income)}`;
-    description = buildCityTopAnswer(c);
-  } else if (peer && peer.cost_index && c.cost_index) {
-    title = `Cost of Living in ${c.short_name} (${year}) vs ${peer.short_name}`;
-    description = buildCityTopAnswer(c);
-  } else {
-    title = `Cost of Living in ${c.short_name} (${year})`;
-    description = buildCityTopAnswer(c);
-  }
+  const crosswalk = decodeCityCrosswalkFromCity(c);
+  const metrics = calculateProprietaryMetrics(crosswalk, c.short_name, slug);
+  const titleAbsolute = buildCityP1Title(c.short_name, crosswalk);
+  const topAnswer = buildCityTopAnswer(c);
+  const description = `[Affordability: ${metrics.housingAffordabilityScore}/100, Relocation Grade: ${metrics.overallGrade}] ${topAnswer}`;
   const gate = getDbPageGate({
     alternativeLinkCount: Math.max(3, stateCities.slice(0, 3).length),
     dataVintage,
-    topAnswer: description,
+    topAnswer,
   });
 
   return {
-    title,
+    title: { absolute: titleAbsolute },
     description,
     alternates: { canonical: `/city/${slug}/` },
-    openGraph: { title, description, url: `/city/${slug}/` },
+    openGraph: { title: titleAbsolute, description, url: `/city/${slug}/` },
     robots: buildDbPageRobots(gate.pass),
   };
 }
@@ -123,6 +125,18 @@ export default async function CityPage({ params }: Props) {
   const risk = getRiskByCbsa(c.fips);
   const riskCommentary = risk ? buildRiskCommentary(slug, risk, c.short_name) : null;
   const hazardTier = classifyHazardTier(risk);
+  const affordability = classifyAffordability(c.median_income, c.median_home_value);
+  const growth = classifyCityGrowth(c);
+  const interpretation = interpretCity({
+    cityName: c.short_name,
+    affordability,
+    growth,
+    hazard: hazardTier,
+    dominantHazardLabelText: dominantHazardLabel(hazardTier.dominantHazard),
+  });
+  const crosswalk = decodeCityCrosswalkFromCity(c);
+  const metrics = calculateProprietaryMetrics(crosswalk, c.short_name, slug);
+  const verdictChip = buildCityVerdictChip(crosswalk);
   const topAnswer = buildCityTopAnswer(c);
   const autoFaqs = generateAutoFAQs(c, weather);
   const faqs = [
@@ -140,16 +154,25 @@ export default async function CityPage({ params }: Props) {
   const breadcrumbs = [{ name: "Home", url: "/" }, { name: c.state, url: `/state/${c.state.toLowerCase()}/` }, { name: c.short_name, url: `/city/${slug}/` }];
 
   return (
-    <div>
+    <article data-toc-root>
       <nav className="text-sm text-slate-500 mb-4">
         {breadcrumbs.map((b, i) => (<span key={i}>{i > 0 && " / "}{i < 2 ? <a href={b.url} className="hover:underline">{b.name}</a> : <span className="text-slate-800">{b.name}</span>}</span>))}
       </nav>
+
+      {(() => {
+        const img = getCityImage(slug);
+        return img ? <CityHeroImage img={img} /> : null;
+      })()}
 
       <AnswerHero
         title={`${c.short_name} city guide`}
         subtitle={c.name}
         tagline={`${topAnswer} ${analysis.summary}`}
         badges={[
+          {
+            label: verdictChip,
+            tone: ((crosswalk.verdict === 'A' || crosswalk.verdict === 'B') ? 'emerald' : 'amber') as 'amber' | 'emerald',
+          },
           ...(c.cost_index ? [{
             label: c.cost_index > 100 ? `${(c.cost_index - 100).toFixed(0)}% above US` : `${(100 - c.cost_index).toFixed(0)}% below US`,
             tone: ((c.cost_index > 100 ? "amber" : "emerald") as "amber" | "emerald"),
@@ -181,6 +204,14 @@ export default async function CityPage({ params }: Props) {
         ]}
         updated={buildTrustUpdatedLabel(dataVintage)}
         methodologyUrl={METHODOLOGY_URL}
+      />
+
+      <ProprietaryMetricsBlock
+        housingAffordabilityScore={metrics.housingAffordabilityScore}
+        economicVitalityScore={metrics.economicVitalityScore}
+        environmentalResilienceScore={metrics.environmentalResilienceScore}
+        overallGrade={metrics.overallGrade}
+        commentary={metrics.commentary}
       />
 
       <EditorNote note={`This guide covers key livability metrics for ${c.short_name}, including cost of living, income levels, housing costs, and climate data to help you evaluate whether this city is right for you.`} />
@@ -304,6 +335,14 @@ export default async function CityPage({ params }: Props) {
           </section>
         );
       })()}
+
+      <CityInterpretationStrip
+        cityName={c.short_name}
+        affordabilityTier={affordability.tier}
+        growthBand={growth.band}
+        hazardTier={hazardTier.tier}
+        interpretation={interpretation}
+      />
 
       {/* ─── Risk Profile (FEMA NRI) ──────────────────────────────────
           2026-04-29 HCU 5-chunk patch — guidebycity unique-data section.
@@ -499,6 +538,8 @@ export default async function CityPage({ params }: Props) {
         ]}
       />
 
+      <CrosswalkBridge stateCode={c.state} />
+
       <AuthorBox vintage={CITY_VINTAGE} />
 
           <EmbedButton url="https://guidebycity.com" title="Data from GuideByCity" site="GuideByCity" siteUrl="https://guidebycity.com" />
@@ -535,10 +576,10 @@ export default async function CityPage({ params }: Props) {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({ ...breadcrumbSchema(breadcrumbs), author: { "@type": "Organization", name: PUBLISHER.name } }) }} />
       {faqs.length > 0 && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({ ...faqSchema(faqs), author: { "@type": "Organization", name: PUBLISHER.name } }) }} />}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(datasetSchema(
-        `${c.short_name} — Cost-of-Living & Hazard-Risk Profile`,
-        `City-level dataset for ${c.short_name}: cost-of-living index from BEA Regional Price Parities, median household income / home value / rent from Census ACS, FEMA NRI primary-county hazard rating, and our HazardTier 5-band rollup.`,
+        `${c.short_name} — Cost-of-Living, Affordability, Growth & Hazard-Risk Profile`,
+        `City-level dataset for ${c.short_name}: BEA Regional Price Parities cost-of-living index, Census ACS B25077 median home value, Census ACS B19013 median household income, Census ACS B25064 median rent, FEMA NRI v2024 primary-county hazard rating, plus three GuideByCity editorial classifiers — CityAffordabilityTier (5-band rollup of Census ACS B25077 ÷ Census ACS B19013), PopulationGrowthBand (5-band rollup of Census Decennial 2010 → Census ACS 2024 annualized rate), and HazardTier (5-band rollup of FEMA NRI v2024).`,
         `/city/${slug}/`,
       )) }} />
-    </div>
+    </article>
   );
 }

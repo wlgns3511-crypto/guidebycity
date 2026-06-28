@@ -221,6 +221,85 @@ export default function MethodologyPage() {
         metro-level screening signal only.
       </p>
 
+      <h2 id="city-affordability-tier">CityAffordabilityTier — our 5-band Census ACS price-to-income rollup</h2>
+      <p>
+        CityAffordabilityTier is the second editorial derivation GuideByCity
+        publishes. It applies a 5-band classifier to the Census ACS B25077
+        median home value divided by Census ACS B19013 median household
+        income — the price-to-income ratio that the Demographia International
+        Housing Affordability series and the Federal Reserve Bank of Atlanta
+        Home Ownership Affordability Monitor (HOAM) both use as the canonical
+        single-number affordability metric.
+      </p>
+      <p>
+        The Census ACS B25077 and Census ACS B19013 tables are public, and
+        their values are recomputed each December when the Census ACS 5-year
+        estimates land. The 5 bands are:
+      </p>
+      <ul>
+        <li><strong>Affordable</strong> — Census ACS B25077 ÷ Census ACS B19013 ≤ 3.0 (Demographia &ldquo;affordable&rdquo; line).</li>
+        <li><strong>Modest</strong> — 3.0 &lt; ratio ≤ 4.5 (Demographia &ldquo;moderately unaffordable&rdquo;).</li>
+        <li><strong>Stretched</strong> — 4.5 &lt; ratio ≤ 6.0 (Demographia &ldquo;seriously unaffordable&rdquo; + FRB Atlanta HOAM &ldquo;burdened&rdquo;).</li>
+        <li><strong>Strained</strong> — 6.0 &lt; ratio ≤ 8.0 (Demographia &ldquo;severely unaffordable&rdquo; widened band).</li>
+        <li><strong>Severe</strong> — ratio &gt; 8.0 (top-decile coastal metros — San Jose, San Francisco, Honolulu, Santa Cruz, Los Angeles).</li>
+      </ul>
+      <p>
+        CityAffordabilityTier is <em>not</em> a Demographia, FRB Atlanta, or
+        Census Bureau official tier — it is the GuideByCity derivation of
+        their published ratio framework. The deeper explainer at{" "}
+        {" "}
+        walks through the cutoffs verbatim so any reader can audit the math
+        against the underlying Census ACS B25077 + Census ACS B19013 record.
+      </p>
+
+      <h2 id="population-growth-band">PopulationGrowthBand — Decennial-to-ACS paired trajectory</h2>
+      <p>
+        PopulationGrowthBand is the third editorial derivation. It uses
+        the Census Decennial 2010 anchored count, the latest Census ACS
+        5-year estimate for the same FIPS area, and an annualized
+        geometric mean rate to assign each metro to one of 5 trajectory
+        bands. Cutoffs (annualized growth rates):
+      </p>
+      <ul>
+        <li><strong>Booming</strong> — ≥ +2.0% (top-decile inflow).</li>
+        <li><strong>Growing</strong> — +0.8% to +2.0%.</li>
+        <li><strong>Stable</strong> — −0.3% to +0.8%.</li>
+        <li><strong>Slipping</strong> — −1.5% to −0.3%.</li>
+        <li><strong>Shrinking</strong> — &lt; −1.5%.</li>
+      </ul>
+      <p>
+        Where paired Census Decennial 2010 + Census ACS 2024 population data
+        is not yet ingested for a metro, PopulationGrowthBand returns
+        <strong> Unknown</strong> and the city page suppresses the growth
+        paragraph in the interpretation strip — the explicit lever-honesty
+        contract. The deeper explainer at{" "}
+        {" "}
+        documents the geometric annualization and the cross-classification
+        matrix.
+      </p>
+
+      <h2 id="reading-three-axes">Reading a GuideByCity city page across three axes</h2>
+      <p>
+        Every GuideByCity city page surfaces the three classifiers
+        (CityAffordabilityTier, PopulationGrowthBand, HazardTier) as a
+        single interpretation strip near the top of the page. The strip
+        renders a verdict line, three axis paragraphs (each branching on
+        the metro&apos;s tier in that axis), and a trade-off narrative that
+        names the dominant tension (Affordable+Shrinking, Stretched+Booming,
+        Severe+High-hazard, etc).
+      </p>
+      <p>
+        The three classifiers are intentionally orthogonal — Census ACS
+        affordability, Census Decennial+ACS growth, and FEMA NRI hazard —
+        so a metro can be Affordable AND Shrinking AND Low-hazard, or
+        Severe AND Booming AND Extreme-hazard. The cross-reading is what
+        makes the interpretation strip a synthesis rather than three
+        stacked facts. The deeper explainer at{" "}
+        {" "}
+        walks through the 8 dominant cross-readings and how the verdict
+        line is deterministically computed.
+      </p>
+
       <h2>Corrections and feedback</h2>
       <p>
         If a published Census, BEA, BLS, NOAA, HUD, or FEMA figure

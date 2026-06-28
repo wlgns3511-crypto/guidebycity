@@ -10,6 +10,8 @@ import { rollupStateHazardTier, dominantHazardLabel, hazardTierBlurb, type Hazar
 import { AuthorBox } from "@/components/AuthorBox";
 import { STATE_VINTAGE, PUBLISHER, SOURCE_AUTHORITIES } from "@/lib/authorship";
 import { breadcrumbSchema, datasetSchema } from "@/lib/schema";
+import { StateHeroImage } from '@/components/StateHeroImage';
+import { getStateImageByName } from '@/lib/state-images';
 
 interface Props { params: Promise<{ slug: string }> }
 export const dynamicParams = false;
@@ -94,6 +96,8 @@ export default async function StatePage({ params }: Props) {
         <a href="/state/" className="hover:underline">States</a>{' / '}
         <span className="text-slate-800">{full}</span>
       </nav>
+
+      {(() => { const stateImage = getStateImageByName(full); return stateImage ? <StateHeroImage img={stateImage} /> : null; })()}
 
       <h1 className="text-3xl font-bold mb-2">Cities in {full}</h1>
       <p className="text-slate-600 mb-2">
@@ -270,7 +274,7 @@ export default async function StatePage({ params }: Props) {
 
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
         "@context": "https://schema.org",
-        "@type": "AdministrativeArea",
+        "@type": "Place",
         name: full,
         url: `https://guidebycity.com/state/${slug}/`,
         description: `Cost-of-living, income, and hazard-risk profile for ${cities.length} ${full} metros, drawing on Census ACS, BEA Regional Price Parities, and FEMA NRI data.`,
@@ -285,8 +289,8 @@ export default async function StatePage({ params }: Props) {
         { name: full, url: `/state/${slug}/` },
       ])) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(datasetSchema(
-        `${full} — State Cost-of-Living & Hazard-Risk Aggregate`,
-        `State-level aggregate for ${full} covering ${cities.length} metros: cost-of-living and median income drawn from BEA Regional Price Parities and Census ACS, plus our HazardTier 5-band rollup of FEMA NRI v2024 across the state's metros.`,
+        `${full} — State Cost-of-Living, Affordability & Hazard-Risk Aggregate`,
+        `State-level aggregate for ${full} covering ${cities.length} metros: BEA Regional Price Parities cost-of-living index, Census ACS B19013 median household income, Census ACS B25077 median home value, plus our HazardTier 5-band rollup of FEMA NRI v2024 and CityAffordabilityTier 5-band rollup of the Census ACS B25077 ÷ Census ACS B19013 price-to-income ratio across the state's metros.`,
         `/state/${slug}/`,
       )) }} />
     </div>

@@ -14,7 +14,7 @@ export default function EditorialPolicyPage() {
     <article className="prose prose-slate max-w-3xl mx-auto">
       <h1 className="text-3xl font-bold text-teal-700 mb-6">Editorial Policy</h1>
       <p className="text-sm text-slate-500 mb-8">
-        Last updated: <time dateTime={LEGAL_VINTAGES.terms}>{LEGAL_VINTAGES.terms}</time>
+        Last updated: <time dateTime={LEGAL_VINTAGES.editorialPolicy}>{LEGAL_VINTAGES.editorialPolicy}</time>
       </p>
 
       <p>
@@ -67,14 +67,54 @@ export default function EditorialPolicyPage() {
         documentation, that the FEMA NRI primary-county mapping has not silently shifted between versions.
       </p>
 
-      <h2 className="text-xl font-semibold mt-8 mb-3">HazardTier — Our Only Editorial Derivation</h2>
+      <h2 className="text-xl font-semibold mt-8 mb-3">HazardTier — FEMA NRI rollup classifier</h2>
       <p>
-        The single non-trivial editorial derivation we publish is HazardTier, a 5-band rollup of FEMA NRI v2024.
+        The first non-trivial editorial derivation we publish is HazardTier, a 5-band rollup of FEMA NRI v2024.
         HazardTier is not a FEMA-issued rating. The exact rule that produces each tier is published verbatim on the
         <a href="/methodology/" className="text-teal-700 hover:underline"> methodology page</a> and at the top of
         the <a href="/risk/" className="text-teal-700 hover:underline">/risk hub</a>, so reviewers can replay the
         classification against any FEMA NRI download. We do not publish &ldquo;risk scores&rdquo; that are not
-        derivable from a public source.
+        derivable from the FEMA NRI public source.
+      </p>
+
+      <h2 className="text-xl font-semibold mt-8 mb-3">CityAffordabilityTier — Census ACS price-to-income classifier</h2>
+      <p>
+        The second editorial derivation we publish is CityAffordabilityTier, a 5-band classifier of the Census ACS
+        B25077 (median home value) divided by Census ACS B19013 (median household income). CityAffordabilityTier is
+        not a Demographia, FRB Atlanta, U.S. Census Bureau, or BEA-issued rating. The 5 cutoffs (3.0, 4.5, 6.0, 8.0)
+        and the band names are GuideByCity editorial constructs, applied to the Census ACS B25077 + Census ACS
+        B19013 ratio that is the conventional metric in the Demographia International Housing Affordability series
+        and the FRB Atlanta HOAM. The classifier rule is published verbatim on the{" "}
+        <a href="/methodology/" className="text-teal-700 hover:underline">methodology page</a> and at{" "}
+        {" "}
+        so any reviewer can replay the classification against the Census ACS source. The editorial team does not
+        author or modify the Census ACS B25077 or Census ACS B19013 values themselves; the U.S. Census Bureau is
+        the creator and the path from Census ACS source to displayed CityAffordabilityTier is the editorial review.
+      </p>
+
+      <h2 className="text-xl font-semibold mt-8 mb-3">PopulationGrowthBand — Census Decennial paired classifier</h2>
+      <p>
+        The third editorial derivation we publish is PopulationGrowthBand, a 5-band classifier of the Census
+        Decennial 2010 anchored population count paired with the Census ACS 2024 estimate, applying an annualized
+        geometric mean rate. PopulationGrowthBand is not a U.S. Census Bureau official classification. The cutoffs
+        (+2.0%, +0.8%, −0.3%, −1.5% annualized) and the band names are GuideByCity editorial constructs. Where the
+        paired Census Decennial 2010 → Census ACS 2024 population data is not yet ingested in the GuideByCity DB
+        for a metro, PopulationGrowthBand returns &ldquo;Unknown&rdquo; rather than fabricating a band — the
+        explicit lever-honesty contract. The methodology page documents which metros have the paired Census
+        Decennial-to-Census ACS data wired today and which are intentionally suppressed.
+      </p>
+
+      <h2 className="text-xl font-semibold mt-8 mb-3">Three-axis composition and the interpretation strip</h2>
+      <p>
+        Every GuideByCity city page composites the three editorial classifiers — CityAffordabilityTier (Census
+        ACS), PopulationGrowthBand (Census Decennial + Census ACS), and HazardTier (FEMA NRI v2024) — into a
+        single interpretation strip with a verdict line. The three classifiers are intentionally orthogonal: Census
+        ACS affordability, Census Decennial-paired growth, and FEMA NRI hazard. The verdict is derived
+        deterministically from the (CityAffordabilityTier, PopulationGrowthBand, HazardTier) tuple; same
+        combination always produces the same verdict. The editorial team reviews the verdict assignment rule on
+        each Census ACS, Census Decennial, and FEMA NRI refresh cycle. The verdict line is editorial commentary;
+        the underlying Census ACS B25077, Census ACS B19013, Census Decennial 2010, Census ACS 2024 population,
+        and FEMA NRI v2024 values themselves are agency-published facts.
       </p>
 
       <h2 className="text-xl font-semibold mt-8 mb-3">Conflicts and Independence</h2>

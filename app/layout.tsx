@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { UpgradeAnalytics } from "@/components/upgrades/UpgradeAnalytics";
+import RelatedSites from "@/components/RelatedSites";
 const inter = Inter({ subsets: ["latin"], display: "swap" });
 const SITE_NAME = "GuideByCity";
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://guidebycity.com";
@@ -69,8 +70,6 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
                   /compare/* 트리는 4/18 doorway-thin 판단으로 noindex 처리됨.
                   Sitewide layout 링크는 모든 indexable 페이지에 박히므로 AdSense
                   리뷰어가 noindex 트리로 직행. 직접 URL 입력 시엔 페이지 그대로 작동. */}
-              <a href="/guide/" className="hover:text-teal-600">Guides</a>
-              <a href="/blog/" className="hover:text-teal-600">Articles</a>
             </nav>
           </div>
         </header>
@@ -81,6 +80,12 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             <p className="mt-2">
               <a href="/about/" className="hover:text-teal-600">About</a>
               {" | "}
+              <a href="/methodology/" className="hover:text-teal-600">Methodology</a>
+              {" | "}
+              <a href="/editorial-policy/" className="hover:text-teal-600">Editorial Policy</a>
+              {" | "}
+              <a href="/corrections-policy/" className="hover:text-teal-600">Corrections</a>
+              {" | "}
               <a href="/privacy/" className="hover:text-teal-600">Privacy</a>
               {" | "}
               <a href="/terms/" className="hover:text-teal-600">Terms</a>
@@ -89,15 +94,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
               {" | "}
               <a href="/contact/" className="hover:text-teal-600">Contact</a>
             </p>
-            <div className="mt-4 pt-4 border-t border-slate-100">
-              <p className="text-xs font-medium text-slate-400 uppercase tracking-wider mb-2">Other Data Tools</p>
-              <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs">
-                <a href="https://costbycity.com" rel="nofollow" className="hover:text-teal-600">Cost of Living</a>
-                <a href="https://salarybycity.com" rel="nofollow" className="hover:text-teal-600">Salaries</a>
-                <a href="https://zippeek.com" rel="nofollow" className="hover:text-teal-600">ZIP Codes</a>
-                <a href="https://fairrentwize.com" rel="nofollow" className="hover:text-teal-600">Fair Rents</a>
-              </div>
-            </div>
+            <RelatedSites currentSite="GuideByCity" accentClass="hover:text-teal-600" label="Other Data Tools" />
             <p className="mt-4 text-xs text-slate-400">Your city-by-city guide to local costs, services, and quality of life.</p>
             <p className="mt-2">&copy; {new Date().getFullYear()} {SITE_NAME} &mdash; A free public data resource.</p>
           </div>

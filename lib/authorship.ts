@@ -27,19 +27,21 @@ export const NOAA_NORMALS_VINTAGE = '1991–2020 Climate Normals';
 export const HUD_FMR_VINTAGE = 'FY 2026';
 
 // ─── Entity-level vintages (what we last refreshed in our DB) ─────────
-export const CITY_VINTAGE = '2026-04-19';
-export const STATE_VINTAGE = '2026-03-22';
+export const CITY_VINTAGE = '2026-05-11';
+export const STATE_VINTAGE = '2026-05-11';
 export const RANKINGS_VINTAGE = '2026-04-15';
 export const RISK_VINTAGE = '2026-04-08';
-export const GUIDE_VINTAGE = '2026-04-08';
-export const ABOUT_VINTAGE = '2026-04-12';
-export const METHODOLOGY_VINTAGE = '2026-04-08';
-export const SITE_VINTAGE = '2026-03-15';
+export const GUIDE_VINTAGE = '2026-05-11';
+export const ABOUT_VINTAGE = '2026-05-11';
+export const METHODOLOGY_VINTAGE = '2026-05-11';
+export const SITE_VINTAGE = '2026-05-11';
 
 export const LEGAL_VINTAGES = {
   privacy: '2026-04-22',
-  terms: '2026-02-18',
-  disclaimer: '2025-11-04',
+  terms: '2026-05-11',
+  disclaimer: '2026-05-11',
+  editorialPolicy: '2026-05-11',
+  correctionsPolicy: '2026-05-11',
 };
 
 // Backward compat — lib/db-page.ts uses DB_UPDATED via getReviewedAt().
@@ -101,3 +103,18 @@ export const SOURCE_VINTAGES: Record<string, string> = {
 };
 
 export const REVIEWER = SOURCE_AUTHORITIES[0];
+
+/**
+ * Compact source list for the above-the-fold TrustBlock component.
+ * Mirrors SOURCE_AUTHORITIES (same 5 federal sources) but in the
+ * `{name, url}` shape that TrustBlock expects. Kept as a separate
+ * export so schema-clean SOURCE_AUTHORITIES (with @type) doesn't get
+ * coerced through `as const` widening tricks at the call site.
+ */
+export const TRUST_BLOCK_SOURCES: ReadonlyArray<{ name: string; url: string }> = [
+  { name: 'U.S. Census Bureau (ACS 5-yr)', url: 'https://www.census.gov/programs-surveys/acs/' },
+  { name: 'U.S. Bureau of Economic Analysis (RPP)', url: 'https://www.bea.gov/data/prices-inflation/regional-price-parities-state-and-metro-area' },
+  { name: 'U.S. Bureau of Labor Statistics (CPI)', url: 'https://www.bls.gov/cpi/' },
+  { name: 'NOAA NCEI Climate Normals', url: 'https://www.ncei.noaa.gov/' },
+  { name: 'HUD Fair Market Rents', url: 'https://www.hud.gov/topics/rental_assistance' },
+];

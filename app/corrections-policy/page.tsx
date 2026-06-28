@@ -14,7 +14,7 @@ export default function CorrectionsPolicyPage() {
     <article className="prose prose-slate max-w-3xl mx-auto">
       <h1 className="text-3xl font-bold text-teal-700 mb-6">Corrections Policy</h1>
       <p className="text-sm text-slate-500 mb-8">
-        Last updated: <time dateTime={LEGAL_VINTAGES.terms}>{LEGAL_VINTAGES.terms}</time>
+        Last updated: <time dateTime={LEGAL_VINTAGES.correctionsPolicy}>{LEGAL_VINTAGES.correctionsPolicy}</time>
       </p>
 
       <p>
@@ -28,9 +28,24 @@ export default function CorrectionsPolicyPage() {
       <ul>
         <li><strong>Source-vs-page mismatches.</strong> If a value on a guidebycity page does not match the originating Census ACS, BEA RPP, BLS CPI, NOAA NCEI, HUD FMR, or FEMA NRI release for the same entity and same vintage, that is a correction we will fix on the current release cycle.</li>
         <li><strong>HazardTier classifier errors.</strong> If our HazardTier classifier produces a tier that does not match the rule published on the <a href="/methodology/" className="text-teal-700 hover:underline">methodology page</a> when applied to the FEMA NRI v2024 record for that metro, that is a correction we will fix immediately.</li>
-        <li><strong>Stale primary-county mapping.</strong> If a metro&apos;s primary county has been re-defined by OMB and our cbsa_risk table still references the prior mapping, we will re-ingest within 30 days of the OMB notice.</li>
-        <li><strong>Methodology drift.</strong> If our published methodology no longer matches the calculation actually running in code, we will either fix the code to match the doc or update the doc to match the code, with the change-log noted on the methodology page.</li>
+        <li><strong>CityAffordabilityTier classifier errors.</strong> If our CityAffordabilityTier classifier produces a band that does not match the (Census ACS B25077 ÷ Census ACS B19013) ratio cutoffs published on the <a href="/methodology/" className="text-teal-700 hover:underline">methodology page</a> when applied to the current Census ACS vintage for that metro, that is a correction we will fix immediately.</li>
+        <li><strong>PopulationGrowthBand classifier errors.</strong> If our PopulationGrowthBand classifier produces a band that does not match the (Census Decennial 2010 → Census ACS 2024 annualized rate) cutoffs published on the methodology page when applied to the underlying Census Decennial + Census ACS record, that is a correction we will fix immediately. If a metro should be reading &ldquo;Unknown&rdquo; (paired Census Decennial-to-Census ACS data not wired) but is rendering a real band, that is also a correction we will fix.</li>
+        <li><strong>Stale primary-county mapping.</strong> If a metro&apos;s primary county has been re-defined by OMB and our cbsa_risk table still references the prior mapping, we will re-ingest within 30 days of the OMB notice. The same re-ingest applies to the Census ACS B25077 + Census ACS B19013 keyed-to-CBSA mapping driving CityAffordabilityTier.</li>
+        <li><strong>Methodology drift.</strong> If our published methodology no longer matches the calculation actually running in code — across HazardTier, CityAffordabilityTier, or PopulationGrowthBand — we will either fix the code to match the doc or update the doc to match the code, with the change-log noted on the methodology page.</li>
+        <li><strong>3-axis verdict mismatches.</strong> If the interpretation strip verdict line on a city page reports a dominant-signal label that does not match the deterministic rule (the rule mapping from (CityAffordabilityTier, PopulationGrowthBand, HazardTier) tuple → verdict label, documented at /guide/reading-city-pages/), that is a correction we will fix immediately.</li>
       </ul>
+
+      <h2 className="text-xl font-semibold mt-8 mb-3">Triage on the three classifiers</h2>
+      <p>
+        When a reader flags a classifier band that looks wrong for a metro, we run a 4-step triage. (1) Verify
+        the underlying Census ACS, Census Decennial, BEA Regional Price Parities, BLS Consumer Price Index, NOAA
+        Climate Normals, HUD FMR, or FEMA NRI input value matches what is in the GuideByCity DB. (2) Verify the
+        classifier function returns the documented band when fed the input. (3) Verify the band the page renders
+        matches the function output. (4) If all three steps return clean, surface to the reader why the cutoffs
+        produced the result — most often, the metro sits within a few decimal points of a band boundary. Steps 1–3
+        catch ingest, code, and rendering bugs; step 4 catches the &ldquo;intuitive but cutoffs say otherwise&rdquo;
+        case where the classifier is working as designed.
+      </p>
 
       <h2 className="text-xl font-semibold mt-8 mb-3">What Falls Outside Our Remit</h2>
       <p>

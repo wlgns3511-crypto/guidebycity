@@ -1,231 +1,47 @@
-/**
- * Long-form evergreen guides — US city comparison and relocation data.
- * Hub pages that link deep into the city comparison matrix.
- * Each guide targets a high-intent keyword and answers a complete question.
- */
-
+// lib/guides.ts — stub after /guide/* HCU kill (2026-05-27).
+// Real guide content + routes removed; this stub keeps external imports
+// (sitemap loops, orphan components, etc.) type-safe by returning an empty
+// array. All Guide fields are optional so any orphaned consumer that reads
+// guide.readingTime / .lastModified / .content compiles. At runtime the
+// array is empty so those accesses never execute.
 export interface Guide {
   slug: string;
   title: string;
   description: string;
-  intro: string; // HTML
-  sections: Array<{ heading: string; html: string }>;
-  faqs: Array<{ question: string; answer: string }>;
-  category: string;
-  updatedAt: string;
+  intro?: string;
+  sections?: Array<{ heading: string; html: string }>;
+  faqs?: Array<{ question: string; answer: string }>;
+  category?: string;
+  updatedAt?: string;
+  // Optional fields observed in portfolio orphan-component consumers:
+  date?: string;
+  publishedAt?: string;
+  lastModified?: string;
+  content?: string;
+  readingTime?: number;
+  tags?: string[];
+  level?: string;
+  excerpt?: string;
+  image?: string;
+  author?: string;
+  metaDesc?: string;
+  oneLine?: string;
+  screener?: string;
+  name?: string;
+  categoryLabel?: string;
+  titleLabel?: string;
 }
 
-const u = '2026-04-10';
-
-export const guides: Guide[] = [
-  {
-    slug: 'cost-of-living-vs-quality-of-life',
-    title: 'Cost of Living vs Quality of Life: The 10 Best-Value US Cities',
-    description: 'Which US cities score high on both affordability and livability? We rank metros by combining COL index, walkability, healthcare access, climate comfort, and job market strength.',
-    category: 'Relocation',
-    updatedAt: u,
-    intro: `<p>Most "best cities" lists pick either cheap places or nice places. They rarely overlap because the methodology ignores the tradeoff that actually matters: how much quality of life do you get per dollar spent? This guide combines six measurable dimensions into a single value score and identifies the 10 metros where your money buys the most livability.</p><p>Every metric comes from a public federal dataset: the BEA Regional Price Parities for cost, the EPA Smart Location Database for walkability, CMS data for healthcare access, NOAA climate normals, and BLS employment statistics for job markets. No opinion surveys, no sponsored placements.</p>`,
-    sections: [
-      {
-        heading: 'The 6 metrics behind the value score',
-        html: `<p>Each city is scored on a 0-100 scale across six dimensions, then averaged with equal weight:</p><ol><li><strong>Cost of Living Index</strong> — BEA Regional Price Parities measure the price level of goods and services relative to the national average (100). A score of 92 means 8% cheaper than the US average.</li><li><strong>Walkability</strong> — EPA National Walkability Index assigns a 1-20 score to every Census block group based on intersection density, proximity to transit, and employment mix. We use the metro-wide population-weighted mean.</li><li><strong>Healthcare Access</strong> — CMS hospital compare data: number of acute care beds per 100K residents, average ER wait time, and percentage of population within 30 minutes of a Level I or II trauma center.</li><li><strong>Climate Comfort</strong> — NOAA climate normals: number of days per year between 55-85 F, annual sunshine hours, and days with air quality index above 100 (penalty).</li><li><strong>Job Market Strength</strong> — BLS Current Employment Statistics: 12-month job growth rate, unemployment rate relative to national average, and median wage-to-COL ratio.</li><li><strong>Housing Affordability</strong> — ACS 5-Year median home price to median household income ratio. National median is 4.5x; below 3.5x is considered affordable.</li></ol>`,
-      },
-      {
-        heading: 'Top 10 best-value cities in 2025',
-        html: `<p>Ranked by composite value score (higher = better value):</p><ol><li><strong>Raleigh-Durham, NC</strong> (score 78) — COL 96, strong job market driven by Research Triangle tech employment, 218 comfortable-weather days, housing ratio 3.9x.</li><li><strong>Madison, WI</strong> (score 76) — COL 97, walkability boosted by UW-Madison campus core, excellent healthcare network including UW Health, housing ratio 3.7x.</li><li><strong>Des Moines, IA</strong> (score 75) — COL 89, housing ratio 2.8x (one of the lowest in any metro over 500K), 3.1% unemployment, strong insurance/finance sector.</li><li><strong>Omaha, NE</strong> (score 74) — COL 90, 5 Fortune 500 headquarters, housing ratio 2.9x, 200+ comfortable-weather days despite cold winters.</li><li><strong>Pittsburgh, PA</strong> (score 73) — COL 93, walkability 14.2 (top 15% nationally), healthcare cluster anchored by UPMC, housing ratio 3.2x.</li><li><strong>Huntsville, AL</strong> (score 72) — COL 88, aerospace/defense job growth 4.8% annually, housing ratio 2.6x, mild winters.</li><li><strong>Salt Lake City, UT</strong> (score 71) — COL 99, but job growth 3.9%, outdoor recreation access unmatched, 230 sunshine days.</li><li><strong>Knoxville, TN</strong> (score 70) — COL 87, no state income tax, housing ratio 3.1x, mild climate with 210 comfortable days.</li><li><strong>Boise, ID</strong> (score 69) — COL 97 (rising), but job growth 4.2%, 210 sunshine days, housing ratio 4.1x (up from 3.2x in 2019).</li><li><strong>Lexington, KY</strong> (score 68) — COL 90, healthcare cluster (UK HealthCare), housing ratio 3.0x, walkable downtown core.</li></ol>`,
-      },
-      {
-        heading: 'The cities that score high on quality but fail on cost',
-        html: `<p>Several metros rank in the top 10 for livability dimensions but fall out of the value ranking because costs erase the advantage:</p><ul><li><strong>San Francisco, CA</strong> — walkability 16.8, healthcare A+, climate 245 comfortable days. But COL 127 and housing ratio 9.2x make the net value score just 41.</li><li><strong>Seattle, WA</strong> — job growth 3.6%, walkability 14.5, no state income tax. COL 118 and housing ratio 7.1x drag value to 48.</li><li><strong>Boston, MA</strong> — healthcare access possibly the best in the country (8 teaching hospitals), walkability 15.2. Housing ratio 6.8x and COL 122 keep it at value score 45.</li></ul><p>The pattern is clear: once housing costs exceed 5x median income, almost no combination of other factors produces good value. Housing is the single largest expense for most households and dominates the equation.</p>`,
-      },
-      {
-        heading: 'The cities that are cheap but not worth it',
-        html: `<p>Equally important: several metros with rock-bottom costs score poorly overall because affordability without opportunity is just cheap stagnation.</p><ul><li><strong>Brownsville, TX</strong> — COL 82, housing ratio 2.3x. But job growth -0.4%, healthcare access bottom quartile (65-minute average ER wait), walkability 6.2.</li><li><strong>Shreveport, LA</strong> — COL 84, housing ratio 2.1x. Unemployment 6.8%, negative population growth since 2015, limited transit.</li><li><strong>Macon, GA</strong> — COL 83, housing ratio 2.0x. But violent crime rate 3x national average, job growth flat, healthcare access below average.</li></ul><p>This is why single-metric rankings mislead. A city that is 20% cheaper than average but has stagnant wages and poor healthcare is not a good deal for anyone planning to live there long-term.</p>`,
-      },
-      {
-        heading: 'How to use this data for your own decision',
-        html: `<p>The composite score is a starting point, not a final answer. Your personal weights will differ:</p><ul><li><strong>Remote workers</strong> — weight COL and climate higher; job market matters less. Des Moines and Knoxville jump to the top.</li><li><strong>Young families</strong> — weight school quality and healthcare higher. Raleigh-Durham and Madison dominate.</li><li><strong>Retirees</strong> — weight healthcare, climate, and property tax lower. Knoxville (no income tax) and Huntsville (low property tax) rise.</li></ul><p>Use our <a href="/compare/">city comparison tool</a> to build a custom ranking with your own weights across all 384 metros.</p>`,
-      },
-      {
-        heading: 'Methodology notes and data sources',
-        html: `<p>All data points are from federal or public academic sources, updated as of Q1 2025:</p><ul><li>BEA Regional Price Parities (2023 release, most recent available)</li><li>EPA Smart Location Database v3.0</li><li>CMS Hospital Compare and Medicare Provider data</li><li>NOAA 1991-2020 Climate Normals</li><li>BLS Current Employment Statistics (December 2024)</li><li>ACS 5-Year Estimates (2019-2023)</li></ul><p>We do not use Numbeo, Niche, or other crowdsourced data. Those platforms have well-documented sampling bias toward higher-income respondents in desirable cities and undercount rural and mid-size metro experiences.</p>`,
-      },
-    ],
-    faqs: [
-      { question: 'What is the single best metric for comparing cities?', answer: 'Housing-price-to-income ratio. It captures both the cost side (home prices) and the opportunity side (local wages) in one number. A ratio below 3.5 is generally considered affordable; above 5.0 is stressed. The national median is about 4.5.' },
-      { question: 'Is cost of living the same as housing cost?', answer: 'No. The BEA Regional Price Parities measure all goods and services including groceries, transportation, healthcare, and utilities. Housing is about 30-40% of the total COL index, but not all of it. A city can have cheap housing but expensive utilities and groceries (common in rural areas with limited retail competition).' },
-      { question: 'How accurate are online cost-of-living calculators?', answer: 'Most online calculators use Numbeo or C2ER data, which rely on self-reported crowdsourced prices. These tend to overstate costs in popular cities (more respondents report trendy neighborhoods) and understate costs in less-covered metros. BEA Regional Price Parities use actual transaction data and are more reliable for metro-level comparisons.' },
-      { question: 'Why is walkability included as a quality-of-life metric?', answer: 'Research from the National Association of Realtors and multiple urban planning studies shows that walkability correlates with lower transportation costs (averaging $3,000-$6,000/year savings), better physical health outcomes, and higher property value appreciation. It is both a quality metric and a hidden cost metric.' },
-      { question: 'Do these rankings account for state income tax?', answer: 'The BEA Regional Price Parities do not directly include taxes. However, our job market score uses median wage-to-COL ratio, which indirectly captures take-home pay in no-income-tax states like Tennessee, Texas, and Florida. For retirees, state tax treatment of Social Security and pensions matters more — see our retirement destination guide.' },
-      { question: 'How often do these rankings change?', answer: 'The underlying federal datasets update annually (ACS, BLS) or every 2-3 years (BEA RPP, EPA walkability). Year-over-year, the top 10 is fairly stable. The biggest movers are fast-growing Sunbelt metros where housing costs are rising faster than wages, which tends to push them down the value ranking over time.' },
-      { question: 'What about crime rates?', answer: 'We considered including FBI UCR crime data but excluded it because metro-level crime statistics are heavily influenced by reporting methodology differences between jurisdictions. A city with proactive policing may report higher crime than one that underreports. We recommend checking local crime maps for specific neighborhoods rather than relying on metro-wide averages.' },
-    ],
-  },
-  {
-    slug: 'best-cities-remote-workers',
-    title: 'Best US Cities for Remote Workers: Internet, Cost, and Lifestyle Data',
-    description: 'Data-driven ranking of US metros for remote workers based on FCC broadband coverage, cost of living, coworking density, timezone advantages, and climate.',
-    category: 'Remote Work',
-    updatedAt: u,
-    intro: `<p>Remote work untethered 35 million Americans from their office ZIP code. But "work from anywhere" does not mean everywhere is equally good. Internet reliability, cost of living, timezone alignment with major employers, and daily-life infrastructure vary enormously across US metros. This guide uses FCC broadband data, BEA cost metrics, and local infrastructure counts to identify where remote workers get the most value.</p><p>We define "remote worker" as someone who needs reliable 100+ Mbps internet, a stable power grid, and the flexibility to take calls across US timezones. If that describes you, these are the metros where your salary stretches furthest.</p>`,
-    sections: [
-      {
-        heading: 'Internet infrastructure: the non-negotiable',
-        html: `<p>The FCC Broadband Data Collection (BDC) map shows that 94.5% of US households have access to at least 100/20 Mbps service as of late 2024. But "access" and "reliability" are different things. Here is what the data reveals:</p><ul><li><strong>Fiber coverage above 80%</strong>: Chattanooga, TN (EPB municipal fiber), Huntsville, AL (Google Fiber + municipal), Raleigh-Durham, NC, Kansas City, MO, Salt Lake City, UT, Austin, TX.</li><li><strong>Lowest average latency</strong>: Metro areas with major internet exchange points (IXPs) — Dallas, Atlanta, Chicago, Denver, Seattle — typically deliver sub-10ms latency to US-East and US-West cloud regions.</li><li><strong>Starlink rural viability</strong>: If you prefer a rural location, Starlink delivers 40-100 Mbps in areas with low subscriber density. Best performance: Mountain West states (Montana, Wyoming, Idaho) where ground station coverage is strong and subscriber counts are low.</li></ul><p>Avoid: rural areas served by a single fixed-wireless ISP with no fiber buildout planned. The FCC BDC map shows buildout plans — check before signing a lease.</p>`,
-      },
-      {
-        heading: 'Top 10 metros for remote workers',
-        html: `<p>Ranked by our Remote Work Index (equal-weighted: internet, COL, climate, coworking density, timezone):</p><ol><li><strong>Raleigh-Durham, NC</strong> — fiber 82%, COL 96, Eastern timezone (aligns with NYC/DC employers), 340+ coworking seats per 100K, mild climate.</li><li><strong>Salt Lake City, UT</strong> — fiber 78%, COL 99, Mountain timezone (overlaps both coasts' business hours), outdoor lifestyle unmatched.</li><li><strong>Chattanooga, TN</strong> — municipal gigabit fiber since 2010, COL 86, no state income tax, growing coworking scene, 210 comfortable-weather days.</li><li><strong>Boise, ID</strong> — fiber 65%, COL 97, Mountain timezone, 210 sunshine days, fast-growing tech community.</li><li><strong>Des Moines, IA</strong> — fiber 70%, COL 89, Central timezone (ideal for coast-to-coast calls 8am-6pm), housing ratio 2.8x.</li><li><strong>Huntsville, AL</strong> — Google Fiber city, COL 88, defense-tech remote contracts abundant, housing ratio 2.6x.</li><li><strong>Colorado Springs, CO</strong> — fiber 72%, COL 98, Mountain timezone, 243 sunshine days, outdoor recreation access.</li><li><strong>Knoxville, TN</strong> — fiber 60%, COL 87, no state income tax, mild climate, low housing cost.</li><li><strong>Tulsa, OK</strong> — fiber 68%, COL 86, Tulsa Remote program offers $10K relocation grants, Central timezone.</li><li><strong>Bentonville, AR</strong> — fiber 75% (Walmart HQ investment), COL 87, mountain biking trails, Northwest Arkansas Council relocation incentives.</li></ol>`,
-      },
-      {
-        heading: 'Timezone strategy matters more than you think',
-        html: `<p>If your employer or key clients are on the East Coast, living in Pacific timezone means your workday starts at 6 AM to make a 9 AM ET standup. Over months, this creates burnout. The data shows the most practical timezone alignments:</p><ul><li><strong>Eastern timezone</strong> — best for finance, government, healthcare, and media roles headquartered in NYC, DC, or Boston. No morning shift required.</li><li><strong>Central timezone</strong> — the sweet spot for coast-to-coast collaboration. A 9 AM CT start covers 10 AM ET and 7 AM PT — both coasts' core hours overlap with yours.</li><li><strong>Mountain timezone</strong> — works well for West Coast employers (only 1 hour offset) while still overlapping with East Coast mornings.</li><li><strong>Pacific timezone</strong> — ideal only if your team is also Pacific or if you work async. Otherwise, expect early mornings for East Coast meetings.</li></ul>`,
-      },
-      {
-        heading: 'Coworking and third-space density',
-        html: `<p>Not everyone works well from a home office. Coworking spaces, libraries with dedicated work rooms, and coffee shops with reliable WiFi form the "third space" infrastructure that remote workers depend on.</p><p>Metros with the highest coworking seats per 100K population (Coworking Resources data):</p><ul><li>Austin, TX — 520 seats per 100K</li><li>Denver, CO — 480</li><li>Raleigh-Durham, NC — 340</li><li>Nashville, TN — 310</li><li>Salt Lake City, UT — 290</li></ul><p>Smaller metros often compensate with excellent public library systems. Madison, WI and Boise, ID both have library systems with reservable work rooms, free gigabit WiFi, and extended hours.</p>`,
-      },
-      {
-        heading: 'The COL efficiency calculation',
-        html: `<p>A remote worker earning a San Francisco salary ($145K median for tech) while living in Chattanooga (COL index 86) effectively gets a 16% raise before accounting for Tennessee's 0% state income tax. Here is the math:</p><ul><li>$145K in SF (COL 127) = purchasing power of $114K nationally</li><li>$145K in Chattanooga (COL 86) = purchasing power of $169K nationally</li><li>Net gain: $55K in real purchasing power — a 48% improvement</li></ul><p>Add the state income tax difference (California 9.3% marginal vs Tennessee 0%) and the gap widens by another $13K. Total real-dollar advantage: roughly $68K per year.</p><p>This is why geographic arbitrage is the single largest financial lever available to remote workers. Our <a href="/compare/">city comparison tool</a> lets you run this calculation for any two metros.</p>`,
-      },
-    ],
-    faqs: [
-      { question: 'What internet speed do remote workers actually need?', answer: 'For video calls (Zoom, Teams), you need 25 Mbps down and 10 Mbps up minimum. For comfortable work with multiple tabs, cloud apps, and occasional large file transfers, 100/20 Mbps is the practical floor. If two people work from home simultaneously with video calls, target 200/20 Mbps.' },
-      { question: 'Is Starlink reliable enough for remote work?', answer: 'In low-density areas (fewer than 100 subscribers per cell), Starlink delivers 40-100 Mbps with latency around 25-50ms. This is usable for video calls. In congested cells near cities, speeds can drop below 25 Mbps during peak hours. Check Starlink availability maps and local user reports before depending on it for your livelihood.' },
-      { question: 'Do any cities offer relocation incentives for remote workers?', answer: 'Yes. Tulsa Remote (Oklahoma) offers $10,000 plus perks. Northwest Arkansas Council offers $10,000 plus a mountain bike or museum membership. Topeka, Kansas offers up to $15,000. MakeMyMove.com aggregates about 100 communities offering cash or perks. Most require a 1-year residency commitment and proof of remote employment.' },
-      { question: 'Should I factor state income tax into my decision?', answer: 'Absolutely. Nine states have no income tax: Alaska, Florida, Nevada, New Hampshire (dividends only), South Dakota, Tennessee, Texas, Washington, and Wyoming. For a $120K salary, the difference between California (9.3% marginal) and Texas (0%) is roughly $8,000-$11,000 per year. That alone can offset a slightly higher housing cost.' },
-      { question: 'How do I check real internet speeds for a specific address?', answer: 'The FCC Broadband Data Collection map (broadbandmap.fcc.gov) shows which ISPs serve each address and their advertised speeds. For real-world speeds, check Ookla Speedtest aggregate data by ZIP code or ask potential neighbors in local forums. Advertised speeds and actual speeds often differ by 20-40%.' },
-      { question: 'What about international remote workers — do these rankings apply?', answer: 'These rankings are designed for US-based workers with US employers. International timezone alignment, visa requirements, and tax treaties are entirely different considerations. The COL and internet data still apply to anyone physically located in these metros, regardless of employer location.' },
-    ],
-  },
-  {
-    slug: 'retirement-destination-data',
-    title: 'Best US Retirement Destinations: Tax Burden, Healthcare, and Climate Data',
-    description: 'Data-driven analysis of where to retire in the US based on state tax treatment of retirement income, Medicare Advantage penetration, property taxes, and climate comfort.',
-    category: 'Retirement',
-    updatedAt: u,
-    intro: `<p>Choosing where to retire is a financial decision disguised as a lifestyle choice. The difference between the most and least tax-friendly states for retirees can exceed $15,000 per year. Medicare Advantage plan availability varies from 0 to 50+ options depending on your county. Property taxes range from 0.28% (Hawaii) to 2.23% (New Jersey) of assessed value. This guide puts numbers on every variable so you can optimize both your budget and your quality of life.</p>`,
-    sections: [
-      {
-        heading: 'State tax treatment of retirement income',
-        html: `<p>Not all income is taxed equally in retirement. The three sources that matter most — Social Security, pension income, and IRA/401(k) withdrawals — are treated differently by each state:</p><ul><li><strong>States that exempt all three</strong>: Alaska, Florida, Nevada, South Dakota, Tennessee, Texas, Washington, Wyoming (no income tax at all), plus New Hampshire (no tax on earned income, dividends-only tax repealed 2025).</li><li><strong>States that exempt Social Security but tax pensions/withdrawals</strong>: Alabama, Arizona, Arkansas, Hawaii, Illinois, Iowa (phasing out), Mississippi, Pennsylvania.</li><li><strong>States that tax Social Security above thresholds</strong>: Colorado, Connecticut, Kansas, Minnesota, Missouri, Montana, Nebraska, New Mexico, Rhode Island, Utah, Vermont, West Virginia. Most set the threshold between $25,000-$75,000 for a single filer.</li><li><strong>States that fully tax all retirement income</strong>: California (above the standard deduction), Oregon, Massachusetts (flat 5%), and a few others treat retirement income identically to earned income.</li></ul><p>For a couple with $80K in Social Security plus $40K in IRA withdrawals, the annual state tax difference between Florida (0%) and California (~$5,800) is significant over a 20-year retirement.</p>`,
-      },
-      {
-        heading: 'Property tax burden by state',
-        html: `<p>Property tax often hits retirees harder than income tax because it is due regardless of income. The effective rates by state (Tax Foundation, 2024):</p><ul><li><strong>Lowest effective rates</strong>: Hawaii 0.28%, Alabama 0.37%, Colorado 0.49%, Louisiana 0.51%, South Carolina 0.53%, West Virginia 0.54%.</li><li><strong>Highest effective rates</strong>: New Jersey 2.23%, Illinois 2.07%, New Hampshire 1.93%, Connecticut 1.79%, Vermont 1.73%, Texas 1.68%.</li></ul><p>Note the Texas paradox: no income tax, but property taxes of 1.68% on a $300K home are $5,040/year. That can offset the income tax savings for retirees with modest pension income. South Carolina offers both low property taxes (0.53%) and a $50K homestead exemption for those 65+, making it one of the most tax-efficient states overall.</p>`,
-      },
-      {
-        heading: 'Medicare Advantage availability',
-        html: `<p>Original Medicare (Parts A+B) works everywhere, but Medicare Advantage (Part C) plans — which bundle drug coverage, dental, vision, and often gym memberships — vary dramatically by county. CMS data for 2025:</p><ul><li><strong>Highest MA plan choices (30+ plans)</strong>: Miami-Dade FL (52), Los Angeles CA (48), Houston TX (45), Phoenix AZ (42), Orlando FL (38), Tampa FL (36).</li><li><strong>Lowest MA plan choices (0-5 plans)</strong>: Rural Alaska, rural Montana, Wyoming counties, parts of rural Vermont and Maine.</li><li><strong>Highest MA enrollment rate</strong>: Miami-Dade 68%, Puerto Rico 72%, Los Angeles 55%. These areas often have $0-premium plans with rich benefits.</li></ul><p>If you depend on Medicare Advantage for dental and vision (which Original Medicare does not cover), retiring in a metro with 20+ plan options gives you competitive pricing and the ability to switch annually. Rural areas with 1-3 plans offer no competitive pressure and often have narrower provider networks.</p>`,
-      },
-      {
-        heading: 'Climate comfort index for retirees',
-        html: `<p>Retirees spend more time outdoors and at home than working-age adults, making climate a quality-of-life multiplier. We use NOAA data to score metros on:</p><ul><li><strong>Comfortable days (55-85 F)</strong>: San Diego 310, Honolulu 305, Santa Barbara 295, Sarasota 240, Asheville 210, Tucson 205.</li><li><strong>Annual sunshine hours</strong>: Phoenix 3,870, Tucson 3,800, Las Vegas 3,650, Sacramento 3,600, Denver 3,100.</li><li><strong>Extreme heat days (above 100 F)</strong>: Phoenix 100+, Las Vegas 70+, Palm Springs 110+. Heat risk is a serious health concern for those 65+ and should be weighted heavily.</li><li><strong>Humidity index</strong>: Coastal Florida and Gulf Coast metros average 75%+ humidity May-October, which exacerbates cardiovascular and respiratory conditions.</li></ul><p>The best climate corridors for retirees: North Carolina mountain region (Asheville), Pacific Northwest coast (mild but cloudy), and the Arizona-New Mexico high desert (dry heat, cool nights, but extreme summer peaks).</p>`,
-      },
-      {
-        heading: 'The full-picture retirement cost model',
-        html: `<p>A complete retirement cost comparison should include all five pillars:</p><ol><li><strong>State+local income tax on retirement income</strong> — varies $0 to $8,000+/year for a typical retiree couple.</li><li><strong>Property tax</strong> — varies $1,500 to $12,000+/year on a $350K home.</li><li><strong>Healthcare out-of-pocket</strong> — Medicare Advantage premiums ($0-$150/month), Medigap if using Original Medicare ($100-$300/month), plus dental/vision if not covered.</li><li><strong>General cost of living</strong> — groceries, utilities, transportation. BEA Regional Price Parities range from 82 (Mississippi) to 127 (Hawaii).</li><li><strong>Sales tax</strong> — often overlooked. Combined state+local rates range from 0% (Montana, Oregon, New Hampshire, Delaware) to 9.5%+ (Louisiana, Tennessee, Arkansas).</li></ol><p>For a couple spending $60K/year, the difference between the cheapest and most expensive states totals roughly $18,000-$22,000 annually. Over 25 years, that is $450K-$550K in real dollars.</p>`,
-      },
-      {
-        heading: 'Top 5 metros by composite retirement score',
-        html: `<p>Combining all factors — tax burden, healthcare access, climate, and general COL:</p><ol><li><strong>Sarasota-Bradenton, FL</strong> — no income tax, property tax 0.86% (below FL average due to homestead), 38 MA plans, 240 comfortable days, COL 101.</li><li><strong>Asheville, NC</strong> — Social Security exempt, property tax 0.67%, 22 MA plans, 210 comfortable days, COL 96, mountain-town culture.</li><li><strong>Tucson, AZ</strong> — Social Security partially exempt, property tax 0.59%, 28 MA plans, 205 comfortable days (but 45 extreme heat days), COL 93.</li><li><strong>Greenville, SC</strong> — Social Security exempt, property tax 0.53%, 19 MA plans, 205 comfortable days, COL 91, growing healthcare cluster.</li><li><strong>San Antonio, TX</strong> — no income tax, property tax 1.58% (the Texas trade-off), 32 MA plans, 220 comfortable days, COL 92.</li></ol><p>Use our <a href="/compare/">comparison tool</a> to customize these rankings based on your specific income sources and priorities.</p>`,
-      },
-    ],
-    faqs: [
-      { question: 'Which states do not tax Social Security benefits?', answer: 'As of 2025, 41 states plus DC do not tax Social Security. The 9 states that still tax it (above income thresholds) are: Colorado, Connecticut, Kansas, Minnesota, Missouri, Montana, New Mexico, Rhode Island, and Utah. Several of these are phasing it out — Kansas fully exempts it starting 2025, and others are raising thresholds annually.' },
-      { question: 'Is Florida really the best state to retire?', answer: 'Florida scores well on income tax (0%) and Medicare Advantage availability (40+ plans in most metros). However, property taxes average 0.89%, homeowners insurance is the most expensive in the nation ($4,200+ average), and hurricane risk is real. For retirees who rent rather than own, Florida is excellent. For homeowners, the insurance cost can offset the tax savings.' },
-      { question: 'How much does property tax matter for retirees?', answer: 'More than most people realize. On a $350K home, the difference between Hawaii (0.28% = $980/year) and New Jersey (2.23% = $7,805/year) is $6,825 annually. Over 20 years, that is $136,500. Property tax also increases with home values, while retirement income is often flat or slowly declining in real terms.' },
-      { question: 'What is a Medicare Advantage plan and why does location matter?', answer: 'Medicare Advantage (Part C) is a private alternative to Original Medicare that often includes dental, vision, hearing, and gym memberships. Plan availability and benefits vary by county because insurers bid based on local healthcare costs and competition. In counties with 30+ plans, competition drives better benefits and lower premiums. In counties with 1-3 plans, there is little incentive to offer rich benefits.' },
-      { question: 'Should I move before or after I retire?', answer: 'Before, if possible. Most states determine tax residency based on where you live for the majority of the year (183+ days). Establishing residency in your target state a year before retirement simplifies the transition and avoids dual-state tax filing. Also, mortgage qualification is easier while you still have employment income.' },
-      { question: 'What about estate and inheritance taxes?', answer: 'Twelve states plus DC levy an estate tax (Connecticut, Hawaii, Illinois, Maine, Maryland, Massachusetts, Minnesota, New York, Oregon, Rhode Island, Vermont, Washington). Six states levy an inheritance tax (Iowa phasing out by 2025, Kentucky, Maryland, Nebraska, New Jersey, Pennsylvania). Maryland is the only state with both. If you have significant assets, this should factor into your state choice.' },
-    ],
-  },
-  {
-    slug: 'college-town-economics',
-    title: 'College Town Economics: How Universities Distort Local Markets',
-    description: 'How major universities reshape local employment, housing, demographics, and consumer markets — and which college towns offer the best quality of life for non-students.',
-    category: 'Housing & Economy',
-    updatedAt: u,
-    intro: `<p>College towns are economic anomalies. A single institution can represent 30-50% of local employment, inflate housing costs near campus while depressing them miles away, create year-round demand for restaurants and retail that would not otherwise exist, and skew the local age distribution so dramatically that school board elections are decided by 20-year-olds. This guide examines how university economies actually work and which college towns offer the best deal for non-student residents.</p>`,
-    sections: [
-      {
-        heading: 'The university as employer and economic engine',
-        html: `<p>In most college towns, the university is the largest employer by a factor of 2-5x. This creates unusual labor market dynamics:</p><ul><li><strong>Employment stability</strong>: Universities are recession-resistant employers. Enrollment often increases during downturns as displaced workers return to school. During the 2008-2009 recession, college-town unemployment averaged 2.5 percentage points below national rates (BLS data).</li><li><strong>Wage compression</strong>: University employment pays well at the top (faculty, administrators) but below market for support staff. This creates a bimodal wage distribution — many $35-50K jobs and many $80-150K jobs, with little in between.</li><li><strong>Healthcare anchoring</strong>: University hospitals (UW Health, Duke Health, UPMC, Ohio State Wexner) often provide the region's most advanced medical care, making college towns disproportionately well-served for healthcare access.</li></ul><p>The economic multiplier is substantial: every $1 of university spending generates roughly $1.50-$2.00 in local economic activity through housing, dining, and services.</p>`,
-      },
-      {
-        heading: 'Housing market distortions',
-        html: `<p>The student population creates two distinct housing markets that interact in unusual ways:</p><ul><li><strong>Near-campus rental inflation</strong>: Properties within 1 mile of campus command 40-80% premiums over comparable units 3+ miles away. Landlords optimize for student tenants (per-bedroom pricing, 12-month leases starting August) which prices out families.</li><li><strong>Homeownership bargains further out</strong>: Because the renter pool is concentrated near campus, single-family homes 5+ miles out are often 15-25% cheaper than equivalent homes in non-college metros of similar size. This is the arbitrage opportunity for non-student residents.</li><li><strong>Seasonal vacancy</strong>: Summer vacancy rates in student neighborhoods can hit 30-40%, creating ghost-town dynamics May through August. This depresses year-round retail in campus-adjacent areas.</li></ul><p>Best college towns for affordable homeownership (median home price to income ratio for non-student households): State College PA (2.8x), Ames IA (2.6x), Manhattan KS (2.4x), Stillwater OK (2.3x), Corvallis OR (3.8x).</p>`,
-      },
-      {
-        heading: 'Demographic distortions and civic impact',
-        html: `<p>A university enrolling 30,000 students in a metro of 100,000 creates a population that is 30% aged 18-24 — compared to the national average of 9%. This ripples through local governance:</p><ul><li><strong>School funding</strong>: Fewer children per capita means less pressure on K-12 budgets, which can result in either excellent schools (resources spread over fewer students) or neglected schools (voter base does not prioritize education spending).</li><li><strong>Infrastructure</strong>: High pedestrian and bicycle usage near campus reduces road maintenance costs but increases demand for transit, lighting, and public safety.</li><li><strong>Voter dynamics</strong>: Student voting power can swing local elections, sometimes creating tension between "town and gown." In cities like Madison WI and Ann Arbor MI, student turnout in local elections exceeds 45%.</li></ul>`,
-      },
-      {
-        heading: 'Best college towns for non-students',
-        html: `<p>Ranking college towns by quality of life for permanent residents who are not affiliated with the university:</p><ol><li><strong>Madison, WI</strong> (UW-Madison) — state capital provides governmental employment diversity beyond the university, excellent public schools, 4-season outdoor recreation, walkable isthmus downtown.</li><li><strong>Charlottesville, VA</strong> (UVA) — wine country setting, strong healthcare (UVA Health), mild climate, historic downtown with year-round cultural events.</li><li><strong>Bozeman, MT</strong> (Montana State) — outdoor recreation (Yellowstone, Big Sky), no state sales tax, fast-growing tech sector. Downside: housing has become expensive (ratio 5.2x).</li><li><strong>Fayetteville, AR</strong> (University of Arkansas) — extremely affordable (COL 85), Walmart HQ nearby diversifies economy, excellent mountain biking trail system.</li><li><strong>Ithaca, NY</strong> (Cornell) — stunning natural setting, Finger Lakes wine region, strong cultural scene. Downside: harsh winters, high NY state taxes.</li></ol>`,
-      },
-      {
-        heading: 'The risks of college-town dependence',
-        html: `<p>Not all college towns are equally resilient. The risks to watch for:</p><ul><li><strong>Enrollment decline</strong>: The "demographic cliff" (declining 18-year-old population starting 2025) will hit smaller private colleges hardest. Towns dependent on a single college with under 5,000 students face real economic risk.</li><li><strong>State funding cuts</strong>: Public universities in states with budget pressures (Illinois, West Virginia, Alaska) have faced hiring freezes and layoffs that ripple through the local economy.</li><li><strong>Remote learning shift</strong>: If a significant share of instruction moves permanently online, the local spending from students living on or near campus declines proportionally.</li></ul><p>The safest college towns are those with large flagship universities (20K+ students), medical centers, and at least one other major employer outside the university system.</p>`,
-      },
-    ],
-    faqs: [
-      { question: 'Why are college towns good places to live?', answer: 'Four structural advantages: recession-resistant employment anchored by the university, above-average healthcare from university medical centers, cultural amenities (museums, performing arts, lectures) subsidized by the institution, and a younger-skewing population that supports restaurants, breweries, and retail that would not survive in a typical small city of the same size.' },
-      { question: 'Are college towns expensive?', answer: 'It depends on proximity to campus. Rentals within 1 mile of a major campus are 40-80% above market. But homeownership 5+ miles from campus is often 15-25% cheaper than comparable non-college metros because the local economy suppresses median incomes (student population drags down the median). The best deals are in homes too far from campus to attract student renters but close enough to enjoy the amenities.' },
-      { question: 'What is the demographic cliff and how does it affect college towns?', answer: 'US births peaked in 2007 and have declined since. Starting around 2025, the number of 18-year-olds entering college will drop by roughly 15% over a decade. Small private colleges (under 2,000 students) are most vulnerable — dozens have already closed or merged. Large state flagships will likely maintain enrollment by recruiting more out-of-state and international students, but smaller college towns face genuine economic risk.' },
-      { question: 'Do college towns have good schools?', answer: 'Generally yes, but not universally. University-affiliated communities tend to have highly educated parent populations who advocate for school quality. The K-12 systems in State College PA, Ames IA, and Madison WI consistently rank in the top 10% statewide. However, some college towns have underfunded districts because the student-heavy population votes against school levies.' },
-      { question: 'How does university football affect the local economy?', answer: 'For Power Five conference schools, home football games generate $5-$15 million per game in local spending (hotels, restaurants, fuel, parking). A 6-7 home game season can represent 3-5% of annual local economic activity. Towns like Tuscaloosa AL, State College PA, and Clemson SC are heavily dependent on this seasonal revenue.' },
-    ],
-  },
-  {
-    slug: 'climate-migration-data',
-    title: 'Climate Migration in America: Census Data, Risk Maps, and Where People Are Moving',
-    description: 'Census population change 2020-2025 overlaid with FEMA flood maps, wildfire risk, and extreme heat data reveals which US metros are gaining and losing residents to climate factors.',
-    category: 'Demographics',
-    updatedAt: u,
-    intro: `<p>Between 2020 and 2025, the US experienced its most geographically uneven population shift since the postwar Sunbelt boom. Census Bureau estimates show some metros growing 10-15% while others lost 3-5% of their population. Overlaying these flows with FEMA flood zones, USFS wildfire risk assessments, and NOAA extreme heat projections reveals a pattern: Americans are moving toward perceived climate safety, though not always rationally. This guide maps the data.</p>`,
-    sections: [
-      {
-        heading: 'The fastest-growing metros 2020-2025',
-        html: `<p>Census Bureau Population Estimates Program, metros ranked by percentage growth:</p><ol><li><strong>The Villages, FL</strong> — +14.2% (retirement community, purpose-built)</li><li><strong>Georgetown-Round Rock, TX (Austin exurb)</strong> — +12.8%</li><li><strong>St. George, UT</strong> — +11.6%</li><li><strong>Boise, ID</strong> — +10.4%</li><li><strong>Fort Myers-Cape Coral, FL</strong> — +9.8% (despite Hurricane Ian in 2022)</li><li><strong>Huntsville, AL</strong> — +9.2%</li><li><strong>Myrtle Beach, SC</strong> — +8.7%</li><li><strong>Provo-Orem, UT</strong> — +8.3%</li><li><strong>Raleigh-Durham, NC</strong> — +7.9%</li><li><strong>Fayetteville-Springdale, AR</strong> — +7.5%</li></ol><p>The dominant pattern: Sunbelt and Mountain West metros with job growth, lower costs, and no state income tax. But several of these destinations face serious climate risks that new arrivals may not have fully priced in.</p>`,
-      },
-      {
-        heading: 'Climate risk overlay: the inconvenient data',
-        html: `<p>Mapping growth metros against federal risk assessments reveals troubling overlaps:</p><ul><li><strong>Fort Myers-Cape Coral, FL</strong> (+9.8% growth) — FEMA Special Flood Hazard Area covers 32% of developed parcels. Hurricane Ian caused $110B in damage in 2022. Flood insurance averaging $2,500-$4,000/year.</li><li><strong>Phoenix-Mesa, AZ</strong> (+5.6% growth) — NOAA projects 30+ additional days above 110 F by 2050. Lake Mead water supply at 35% capacity. Heat-related deaths already exceeding 300/year in Maricopa County.</li><li><strong>Austin-Round Rock, TX</strong> (+12.8% growth) — increasing flash flood frequency in Hill Country, 2023 ice storm exposed grid vulnerability, extreme heat days increasing 3-4 per decade.</li><li><strong>Boise, ID</strong> (+10.4% growth) — wildfire smoke days have tripled since 2010. August 2024 AQI exceeded 200 for 8 consecutive days. Long-term fire risk to housing on wildland-urban interface expanding.</li></ul>`,
-      },
-      {
-        heading: 'The metros losing population and why',
-        html: `<p>Census data shows persistent outmigration from:</p><ul><li><strong>San Francisco-Oakland, CA</strong> — -4.2% since 2020. Primary driver: housing costs (median home $1.3M) and remote work enabling departures, not climate. Climate risk is actually moderate (earthquake aside).</li><li><strong>New York-Newark, NY-NJ</strong> — -2.8%. Tax burden and housing costs drive outflow. Climate risk rising (flooding events increasing post-Sandy).</li><li><strong>Chicago, IL</strong> — -2.1%. Cold winters often cited in surveys, plus high property taxes. Ironically, Chicago's climate risk profile is among the best for a major metro — low wildfire, moderate flood, no hurricane exposure.</li><li><strong>New Orleans, LA</strong> — -1.8%. Repeated hurricane damage, flood insurance costs, and subsidence are driving genuine climate migration. 30% of outmigrants cite weather events as primary motivation (Census Household Pulse Survey).</li></ul><p>A key insight: most current migration is economically motivated, not climate-motivated. But the metros that are losing people often have the best long-term climate resilience (Great Lakes cities), while the destinations have some of the worst risk profiles.</p>`,
-      },
-      {
-        heading: 'Climate-safe metros that are also growing',
-        html: `<p>A smaller group of metros combine population growth with genuinely low climate risk:</p><ul><li><strong>Raleigh-Durham, NC</strong> — moderate flood risk (not coastal), low wildfire, 210 comfortable days, no extreme heat spikes. Growth driven by Research Triangle employment.</li><li><strong>Huntsville, AL</strong> — inland location avoids Gulf hurricane damage, low flood risk, moderate tornado risk (mitigated by building codes). Growth driven by aerospace and defense.</li><li><strong>Madison, WI</strong> — Great Lakes climate buffer, minimal wildfire, moderate flood (well-managed lake levels). Growing slowly (+3.8%) but sustainably.</li><li><strong>Pittsburgh, PA</strong> — lowest overall climate risk score among major metros according to EPA screening tool. Negligible wildfire, flood well-mapped after decades of management, no extreme heat. Population finally stabilizing after decades of decline.</li></ul>`,
-      },
-      {
-        heading: 'Insurance costs as a climate risk proxy',
-        html: `<p>If you want one number that captures climate risk for a specific location, look at insurance premiums. Insurers employ thousands of actuaries whose job is pricing risk accurately:</p><ul><li><strong>Florida homeowners insurance</strong>: average $4,200/year (highest in US), up 40% since 2020. Multiple insurers have left the state entirely.</li><li><strong>California wildfire zones</strong>: FAIR Plan (insurer of last resort) premiums of $5,000-$15,000/year for high-risk parcels. Standard market increasingly refusing to write new policies.</li><li><strong>Louisiana coastal</strong>: flood insurance $2,800-$6,000/year under FEMA Risk Rating 2.0. Combined with homeowners, total insurance can exceed $10,000/year.</li><li><strong>Low-risk benchmark</strong>: Wisconsin, Minnesota, and Iowa homeowners insurance averages $1,200-$1,800/year with stable pricing.</li></ul><p>When insurance becomes unaffordable, property values decline regardless of other factors. This is the mechanism through which climate risk becomes economic reality.</p>`,
-      },
-      {
-        heading: 'What the next decade likely looks like',
-        html: `<p>Based on current Census trends, NOAA climate projections, and insurance market dynamics:</p><ul><li><strong>Continued Sunbelt growth</strong> but at decelerating rates as insurance costs, water scarcity, and heat events accumulate. Phoenix and South Florida are the most likely to see growth stall.</li><li><strong>Great Lakes renaissance</strong>: Buffalo, Cleveland, Detroit, Pittsburgh, and Milwaukee have abundant freshwater, low wildfire risk, minimal flood exposure (compared to coastal metros), and housing stocks available for pennies on replacement cost. Early signals of "climate haven" in-migration are appearing in all five.</li><li><strong>Mountain West adjustment</strong>: Boise, Reno, and other smoke-affected metros will see air quality become a defining issue. Wildfire smoke season already extends from July to October in bad years.</li><li><strong>Insurance-driven retreat</strong>: Coastal areas where insurance costs exceed 3-4% of home value annually will see property value declines and gradual depopulation, particularly barrier islands and flood-repeated inland areas.</li></ul>`,
-      },
-    ],
-    faqs: [
-      { question: 'Are people really moving because of climate change?', answer: 'Not yet in large numbers with explicit climate motivation. Census Household Pulse Survey data shows about 3% of movers cite weather or natural disasters as a primary reason. The dominant drivers remain jobs, housing costs, and family. However, climate factors are increasingly showing up as secondary reasons, and insurance cost increases are creating economic push factors that function as indirect climate migration.' },
-      { question: 'What is the safest US city from climate change?', answer: 'No city is risk-free, but the Great Lakes metros — particularly Pittsburgh, Buffalo, Duluth, and Madison — consistently score lowest on composite climate risk indices that include flood, wildfire, extreme heat, drought, and hurricane exposure. Pittsburgh is often cited by climate researchers as the single most resilient major metro due to its inland location, abundant water, low wildfire risk, and moderate temperature range.' },
-      { question: 'Is flood insurance required for a mortgage?', answer: 'Only if the property is in a FEMA Special Flood Hazard Area (100-year floodplain). However, 25-30% of flood claims come from properties outside designated flood zones. FEMA Risk Rating 2.0 has significantly increased premiums for many properties that were previously cheap to insure, sometimes by 3-5x.' },
-      { question: 'How do I check climate risk for a specific address?', answer: 'Three free tools: FEMA National Flood Hazard Layer (msc.fema.gov) for flood zones, USFS Wildfire Risk to Potential Structures (wildfirerisk.org) for fire risk, and the EPA Environmental Justice Screening Tool (ejscreen.epa.gov) for composite environmental risk. First Street Foundation (riskfactor.com) provides property-level flood, fire, heat, and wind risk scores.' },
-      { question: 'Will climate migration cause housing prices to rise in safe cities?', answer: 'Early data suggests yes. Buffalo NY home prices rose 38% from 2020-2025, Duluth MN rose 32%, and Pittsburgh rose 28% — all faster than historical trends for these markets. These are still affordable compared to coastal metros, but the trend is accelerating. In-migration from high-cost markets brings purchasing power that bids up local prices.' },
-      { question: 'How does water scarcity affect migration?', answer: 'The Colorado River basin (serving Phoenix, Las Vegas, Los Angeles, and 40 million people total) is in a 25-year megadrought. Lake Mead dropped to 35% capacity in 2023. Mandatory water use restrictions are already in effect. Long-term, the Southwest faces genuine water supply constraints that could limit population growth regardless of other factors. The Great Lakes hold 21% of the world surface freshwater and face no similar constraint.' },
-    ],
-  },
-];
+export const guides: Guide[] = [];
 
 export function getAllGuides(): Guide[] {
-  return guides;
+  return [];
 }
 
-export function getGuideBySlug(slug: string): Guide | undefined {
-  return guides.find((g) => g.slug === slug);
+export function getGuideBySlug(_slug: string): Guide | undefined {
+  return undefined;
 }
+
+// Some sites use these alias function names — keep all surfaces stub-compatible.
+export const getAllStaticGuides = getAllGuides;
+export const getGuide = getGuideBySlug;

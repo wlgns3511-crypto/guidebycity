@@ -44,6 +44,46 @@ export default function DisclaimerPage() {
         Our HazardTier 5-band classification (Low → Extreme) is a guidebycity-derived rollup of the FEMA National Risk Index v2024, combining the metro&apos;s primary-county overall rating with the count of FEMA &ldquo;Very High&rdquo;-rated hazards in the metro&apos;s top-3 hazard set. HazardTier is not a FEMA-issued rating and is not endorsed by FEMA, NOAA, or the U.S. Department of Housing and Urban Development. FEMA NRI is itself a screening tool, not a parcel-level risk certification; use the FEMA Flood Map Service Center, USGS National Seismic Hazard Maps, and equivalent source-of-truth products for parcel-specific decisions.
       </p>
 
+      <h2 className="text-xl font-semibold mt-8 mb-3">CityAffordabilityTier and Census ACS</h2>
+      <p>
+        Our CityAffordabilityTier 5-band classifier (Affordable → Severe) is a guidebycity-derived rollup of two
+        Census ACS tables: Census ACS B25077 (median home value for owner-occupied housing units) divided by
+        Census ACS B19013 (median household income in the past 12 months). The 5 cutoffs (3.0, 4.5, 6.0, 8.0)
+        align with the Demographia International Housing Affordability Schedule and the Federal Reserve Bank of
+        Atlanta Home Ownership Affordability Monitor (HOAM) — but CityAffordabilityTier is not a Demographia, FRB
+        Atlanta, or Census Bureau official tier. It is the GuideByCity derivation of the published Census ACS
+        B25077 + Census ACS B19013 price-to-income ratio. The Census ACS itself is a 5-year rolling estimate
+        carrying sampling error; the U.S. Census Bureau does not warrant Census ACS B25077 or Census ACS B19013
+        for individual purchase decisions, and neither do we.
+      </p>
+
+      <h2 className="text-xl font-semibold mt-8 mb-3">PopulationGrowthBand and Census Decennial</h2>
+      <p>
+        Our PopulationGrowthBand 5-band classifier (Booming → Shrinking) uses the Census Decennial 2010 anchored
+        population count for a metro&apos;s FIPS area, the Census ACS 2024 population estimate for the same FIPS
+        area, and an annualized geometric mean rate. PopulationGrowthBand is not a U.S. Census Bureau official
+        classification — the Census Bureau publishes raw Census Decennial and Census ACS values without
+        classifying metros into trajectory bands. Where the paired Census Decennial 2010 → Census ACS 2024
+        population data is not yet ingested in the GuideByCity DB for a metro, PopulationGrowthBand returns
+        &ldquo;Unknown&rdquo; rather than fabricating a band. Annualized geometric rates are sensitive to OMB
+        CBSA boundary changes between Census Decennial 2010 and the current Census ACS vintage; where boundaries
+        have materially shifted, PopulationGrowthBand returns Unknown for that metro.
+      </p>
+
+      <h2 className="text-xl font-semibold mt-8 mb-3">Three-axis interpretation strip and reader use</h2>
+      <p>
+        Every GuideByCity city page composites CityAffordabilityTier (Census ACS), PopulationGrowthBand (Census
+        Decennial + Census ACS), and HazardTier (FEMA NRI v2024) into a single 3-axis interpretation strip with
+        a verdict line. The verdict is derived deterministically from the (CityAffordabilityTier,
+        PopulationGrowthBand, HazardTier) tuple; same combination always produces the same verdict. Readers
+        should treat the verdict as a screening signal, not a decision. None of the three classifiers — Census
+        ACS B25077 affordability, Census Decennial-paired growth, or FEMA NRI v2024 hazard — is a parcel-level
+        certification, an insurance underwriting input, a mortgage qualification input, a legal residency
+        determination, or a relocation recommendation. For parcel-level FEMA NRI exposure see the FEMA Flood Map
+        Service Center; for parcel-level Census ACS estimates see Census Data Explorer; for paired Census
+        Decennial-to-ACS verification see the Census Bureau&apos;s Population Estimates Program.
+      </p>
+
       <h2 className="text-xl font-semibold mt-8 mb-3">External Links</h2>
       <p>
         We link to the U.S. Census Bureau, the U.S. Bureau of Economic Analysis, the U.S. Bureau of Labor Statistics, NOAA, the U.S. Department of Housing and Urban Development, FEMA, USGS, and other federal and state agencies for source verification. We do not control those sites and do not warrant their availability, accuracy, or future changes. External links open in a new tab where supported by the user&apos;s browser.
