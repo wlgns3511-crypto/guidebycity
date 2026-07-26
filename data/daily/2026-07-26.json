@@ -1,0 +1,239 @@
+{
+  "date": "2026-07-26",
+  "kind": "comparison",
+  "title": "Lake Charles, LA (Metropolitan Statistical Area) vs San Francisco-Oakland-Fremont, CA (Metropolitan Statistical Area): a quick GuideByCity comparison",
+  "description": "4 readings from the GuideByCity dataset for 2026-07-26: lake charles, la (metropolitan statistical area) vs san francisco-oakland-fremont, ca (metropolitan statistical area); ranked by population; record in focus: santa fe, nm (metropolitan statistical area); where to go next. Every figure below is ",
+  "intro": "4 readings from the GuideByCity dataset for 2026-07-26: lake charles, la (metropolitan statistical area) vs san francisco-oakland-fremont, ca (metropolitan statistical area); ranked by population; record in focus: santa fe, nm (metropolitan statistical area); where to go next. Every figure below is computed from the stored records, and each link opens the record it came from.",
+  "items": [
+    {
+      "label": "Lake Charles, LA (Metropolitan Statistical Area)",
+      "value": "Population: 216,217",
+      "href": "/city/lake-charles-la/",
+      "metric": 216217,
+      "metricLabel": "population",
+      "verdict": "Ranks #209 of 387 by population · 9% below the median (237,830)."
+    },
+    {
+      "label": "San Francisco-Oakland-Fremont, CA (Metropolitan Statistical Area)",
+      "value": "Population: 4,692,242",
+      "href": "/city/san-francisco-oakland-fremont-ca/",
+      "metric": 4692242,
+      "metricLabel": "population",
+      "verdict": "Ranks #12 of 387 by population · top 3% · 1873% above the median (237,830)."
+    },
+    {
+      "label": "Chicago-Naperville-Elgin, IL-IN (Metropolitan Statistical Area)",
+      "value": "Population: 9,566,955",
+      "href": "/city/chicago-naperville-elgin-il-in/",
+      "metric": 9566955,
+      "metricLabel": "population",
+      "verdict": "Ranks #3 of 387 by population · top 1% · 3923% above the median (237,830)."
+    },
+    {
+      "label": "Dallas-Fort Worth-Arlington, TX (Metropolitan Statistical Area)",
+      "value": "Population: 7,673,379",
+      "href": "/city/dallas-fort-worth-arlington-tx/",
+      "metric": 7673379,
+      "metricLabel": "population",
+      "verdict": "Ranks #4 of 387 by population · top 1% · 3126% above the median (237,830)."
+    },
+    {
+      "label": "Houston-Pasadena-The Woodlands, TX (Metropolitan Statistical Area)",
+      "value": "Population: 7,142,603",
+      "href": "/city/houston-pasadena-the-woodlands-tx/",
+      "metric": 7142603,
+      "metricLabel": "population",
+      "verdict": "Ranks #5 of 387 by population · top 1% · 2903% above the median (237,830)."
+    },
+    {
+      "label": "Washington-Arlington-Alexandria, DC-VA-MD-WV (Metropolitan Statistical Area)",
+      "value": "Population: 6,346,083",
+      "href": "/city/washington-arlington-alexandria-dc-va-md-wv/",
+      "metric": 6346083,
+      "metricLabel": "population",
+      "verdict": "Ranks #6 of 387 by population · top 2% · 2568% above the median (237,830)."
+    },
+    {
+      "label": "Philadelphia-Camden-Wilmington, PA-NJ-DE-MD (Metropolitan Statistical Area)",
+      "value": "Population: 6,232,894",
+      "href": "/city/philadelphia-camden-wilmington-pa-nj-de-md/",
+      "metric": 6232894,
+      "metricLabel": "population",
+      "verdict": "Ranks #7 of 387 by population · top 2% · 2521% above the median (237,830)."
+    },
+    {
+      "label": "Santa Fe, NM (Metropolitan Statistical Area)",
+      "value": "Population: 154,481",
+      "href": "/city/santa-fe-nm/",
+      "metric": 154481,
+      "metricLabel": "population",
+      "verdict": "Ranks #271 of 387 by population · 35% below the median (237,830)."
+    },
+    {
+      "label": "Colorado Springs, CO (Metropolitan Statistical Area)",
+      "value": "Population: 755,081",
+      "href": "/city/colorado-springs-co/",
+      "metric": 755081,
+      "metricLabel": "population"
+    },
+    {
+      "label": "College Station-Bryan, TX (Metropolitan Statistical Area)",
+      "value": "Population: 269,418",
+      "href": "/city/college-station-bryan-tx/",
+      "metric": 269418,
+      "metricLabel": "population"
+    },
+    {
+      "label": "Coeur d'Alene, ID (Metropolitan Statistical Area)",
+      "value": "Population: 173,396",
+      "href": "/city/coeur-dalene-id/",
+      "metric": 173396,
+      "metricLabel": "population"
+    },
+    {
+      "label": "Cleveland, TN (Metropolitan Statistical Area)",
+      "value": "Population: 126,479",
+      "href": "/city/cleveland-tn/",
+      "metric": 126479,
+      "metricLabel": "population"
+    }
+  ],
+  "links": [
+    {
+      "label": "View Lake Charles, LA (Metropolitan Statistical Area)",
+      "href": "/city/lake-charles-la/"
+    },
+    {
+      "label": "View San Francisco-Oakland-Fremont, CA (Metropolitan Statistical Area)",
+      "href": "/city/san-francisco-oakland-fremont-ca/"
+    }
+  ],
+  "sections": [
+    {
+      "kind": "comparison",
+      "heading": "Lake Charles, LA (Metropolitan Statistical Area) vs San Francisco-Oakland-Fremont, CA (Metropolitan Statistical Area)",
+      "body": "Lake Charles, LA (Metropolitan Statistical Area) (Population: 216,217) against San Francisco-Oakland-Fremont, CA (Metropolitan Statistical Area) (Population: 4,692,242). Lake Charles, LA (Metropolitan Statistical Area) is 4,476,025 population lower, a 95.4% gap.",
+      "items": [
+        {
+          "label": "Lake Charles, LA (Metropolitan Statistical Area)",
+          "value": "Population: 216,217",
+          "href": "/city/lake-charles-la/",
+          "metric": 216217,
+          "metricLabel": "population",
+          "verdict": "Ranks #209 of 387 by population · 9% below the median (237,830)."
+        },
+        {
+          "label": "San Francisco-Oakland-Fremont, CA (Metropolitan Statistical Area)",
+          "value": "Population: 4,692,242",
+          "href": "/city/san-francisco-oakland-fremont-ca/",
+          "metric": 4692242,
+          "metricLabel": "population",
+          "verdict": "Ranks #12 of 387 by population · top 3% · 1873% above the median (237,830)."
+        }
+      ],
+      "takeaway": "Both sit against a dataset median of 237,830 population."
+    },
+    {
+      "kind": "ranking",
+      "heading": "Ranked by population",
+      "body": "Positions 3–7 of 387 records carrying a population figure. Ordering is computed from the stored values, not editorial preference.",
+      "items": [
+        {
+          "label": "Chicago-Naperville-Elgin, IL-IN (Metropolitan Statistical Area)",
+          "value": "Population: 9,566,955",
+          "href": "/city/chicago-naperville-elgin-il-in/",
+          "metric": 9566955,
+          "metricLabel": "population",
+          "verdict": "Ranks #3 of 387 by population · top 1% · 3923% above the median (237,830)."
+        },
+        {
+          "label": "Dallas-Fort Worth-Arlington, TX (Metropolitan Statistical Area)",
+          "value": "Population: 7,673,379",
+          "href": "/city/dallas-fort-worth-arlington-tx/",
+          "metric": 7673379,
+          "metricLabel": "population",
+          "verdict": "Ranks #4 of 387 by population · top 1% · 3126% above the median (237,830)."
+        },
+        {
+          "label": "Houston-Pasadena-The Woodlands, TX (Metropolitan Statistical Area)",
+          "value": "Population: 7,142,603",
+          "href": "/city/houston-pasadena-the-woodlands-tx/",
+          "metric": 7142603,
+          "metricLabel": "population",
+          "verdict": "Ranks #5 of 387 by population · top 1% · 2903% above the median (237,830)."
+        },
+        {
+          "label": "Washington-Arlington-Alexandria, DC-VA-MD-WV (Metropolitan Statistical Area)",
+          "value": "Population: 6,346,083",
+          "href": "/city/washington-arlington-alexandria-dc-va-md-wv/",
+          "metric": 6346083,
+          "metricLabel": "population",
+          "verdict": "Ranks #6 of 387 by population · top 2% · 2568% above the median (237,830)."
+        },
+        {
+          "label": "Philadelphia-Camden-Wilmington, PA-NJ-DE-MD (Metropolitan Statistical Area)",
+          "value": "Population: 6,232,894",
+          "href": "/city/philadelphia-camden-wilmington-pa-nj-de-md/",
+          "metric": 6232894,
+          "metricLabel": "population",
+          "verdict": "Ranks #7 of 387 by population · top 2% · 2521% above the median (237,830)."
+        }
+      ],
+      "takeaway": "Dataset median: 237,830. Highest on file: 19,908,595 (New York-Newark-Jersey City, NY-NJ (Metropolitan Statistical Area))."
+    },
+    {
+      "kind": "spotlight",
+      "heading": "Record in focus: Santa Fe, NM (Metropolitan Statistical Area)",
+      "body": "Santa Fe, NM (Metropolitan Statistical Area) records population of 154,481 in the current GuideByCity data. The linked record holds the full field list and the source note behind the figure.",
+      "items": [
+        {
+          "label": "Santa Fe, NM (Metropolitan Statistical Area)",
+          "value": "Population: 154,481",
+          "href": "/city/santa-fe-nm/",
+          "metric": 154481,
+          "metricLabel": "population",
+          "verdict": "Ranks #271 of 387 by population · 35% below the median (237,830)."
+        }
+      ],
+      "takeaway": "Ranks #271 of 387 by population · 35% below the median (237,830)."
+    },
+    {
+      "kind": "route",
+      "heading": "Where to go next",
+      "body": "A short path through GuideByCity for anyone starting today. These are entry points into the detailed pages, not a substitute for them.",
+      "items": [
+        {
+          "label": "Colorado Springs, CO (Metropolitan Statistical Area)",
+          "value": "Population: 755,081",
+          "href": "/city/colorado-springs-co/",
+          "metric": 755081,
+          "metricLabel": "population"
+        },
+        {
+          "label": "College Station-Bryan, TX (Metropolitan Statistical Area)",
+          "value": "Population: 269,418",
+          "href": "/city/college-station-bryan-tx/",
+          "metric": 269418,
+          "metricLabel": "population"
+        },
+        {
+          "label": "Coeur d'Alene, ID (Metropolitan Statistical Area)",
+          "value": "Population: 173,396",
+          "href": "/city/coeur-dalene-id/",
+          "metric": 173396,
+          "metricLabel": "population"
+        },
+        {
+          "label": "Cleveland, TN (Metropolitan Statistical Area)",
+          "value": "Population: 126,479",
+          "href": "/city/cleveland-tn/",
+          "metric": 126479,
+          "metricLabel": "population"
+        }
+      ]
+    }
+  ],
+  "source": "Census ACS and documented public sources",
+  "dataDate": "2026-04-29",
+  "fingerprint": "d6b01f9e"
+}
